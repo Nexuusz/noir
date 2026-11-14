@@ -33,33 +33,25 @@
   .logo .mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));box-shadow:0 6px 18px rgba(168,85,247,.32)}
   .logo .mark svg{width:14px;height:14px;fill:#1a1204;margin-left:1px}
   .logo .txt{font-size:15.5px;font-weight:900;letter-spacing:-.03em;font-family:'Audiowide',sans-serif}
-  .logo .txt b{color:var(--gold)}
   .back{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px 0 10px;border-radius:9px;border:1px solid var(--line);margin-left:auto;font-size:12px;font-weight:700;color:#a9aeba;transition:background .18s,color .18s,border-color .18s}
   .back:hover{background:rgba(255,255,255,.07);color:#fff;border-color:var(--gold)}
   .back svg{width:13px;height:13px}
   main{flex:1;padding:24px 0 60px}
-  .hero{padding:40px 0 20px}
+  .hero{padding:40px 0 20px;text-align:center}
   .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:9.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-hi);margin-bottom:14px}
   .eyebrow::before{content:'';width:18px;height:1.5px;border-radius:2px;background:var(--gold)}
   h1{font-size:clamp(30px,4.6vw,46px);font-weight:900;letter-spacing:-.045em;line-height:1.02}
   h1 b{background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
-  p{margin-top:14px;font-size:13.5px;line-height:1.8;color:#9aa0ae;max-width:62ch}
-  .card{margin-top:28px;padding:26px;border-radius:18px;border:1px solid var(--line-2);background:linear-gradient(170deg,rgba(20,23,31,.96),rgba(10,12,17,.98));box-shadow:0 34px 80px rgba(0,0,0,.66)}
-  .price{display:flex;align-items:baseline;gap:8px;margin:18px 0}
-  .price strong{font-size:52px;font-weight:900;letter-spacing:-.04em;background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .price span{font-size:14px;font-weight:700;color:var(--dimmer)}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 22px;border-radius:11px;font-size:13px;font-weight:800;color:#1a1204;background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));box-shadow:0 12px 28px rgba(168,85,247,.28),inset 0 1px 0 rgba(255,255,255,.4);cursor:pointer;border:none;transition:filter .18s,transform .14s var(--ease)}
-  .btn:hover{filter:brightness(1.08)}
+  p{margin-top:14px;font-size:13.5px;line-height:1.8;color:#9aa0ae;max-width:62ch;margin-inline:auto}
+  .card{margin-top:28px;padding:32px 26px;border-radius:18px;border:1px solid var(--line-2);background:linear-gradient(170deg,rgba(20,23,31,.96),rgba(10,12,17,.98));box-shadow:0 34px 80px rgba(0,0,0,.66);text-align:center}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 28px;border-radius:12px;font-size:14px;font-weight:800;color:#fff;background:#5865F2;box-shadow:0 12px 28px rgba(88,101,242,.35),inset 0 1px 0 rgba(255,255,255,.2);cursor:pointer;border:none;transition:filter .18s,transform .14s var(--ease)}
+  .btn:hover{filter:brightness(1.1)}
   .btn:active{transform:scale(.985)}
-  .btn:disabled{filter:grayscale(.4) brightness(.85);cursor:default}
+  .btn svg{width:20px;height:20px;fill:#fff}
   .perks{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;margin-top:22px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:var(--line)}
   .perk{padding:14px 16px;background:#0a0c11}
   .perk strong{display:block;font-size:12.5px;font-weight:700}
   .perk span{display:block;margin-top:4px;font-size:11px;line-height:1.6;color:#6f7583}
-  .msg{display:none;margin-top:14px;padding:11px 13px;border-radius:10px;font-size:11.5px;font-weight:600;line-height:1.6}
-  .msg.show{display:block}
-  .msg.ok{border:1px solid rgba(61,220,132,.32);background:rgba(61,220,132,.1);color:#a8f0c9}
-  .msg.err{border:1px solid rgba(255,90,90,.35);background:rgba(255,90,90,.1);color:#ffb0b0}
   footer{padding:0 0 26px;font-size:10.5px;line-height:1.8;color:#3f444f;text-align:center}
 </style>
 </head>
@@ -81,54 +73,21 @@
     <div class="hero">
       <span class="eyebrow">Apoie o projeto</span>
       <h1>Ajude o <b>NOIR</b> a continuar grátis.</h1>
-      <p>O NOIR não tem anúncios próprios e não cobra assinatura para assistir. Se quiser ajudar a manter o projeto no ar, apoie com <b>R$ 0,99</b> — qualquer valor já faz diferença. Apoiadores ganham o selo <b>Modo sem anúncios</b> no player.</p>
+      <p>O NOIR não tem anúncios próprios e não cobra assinatura para assistir. Se quiser ajudar a manter o projeto no ar, entre no nosso Discord e apoie a comunidade.</p>
     </div>
     <div class="card">
-      <span class="eyebrow">Apoio único</span>
-      <div class="price"><strong>R$ 0,99</strong><span>pagamento único · sem recorrência</span></div>
-      <button class="btn" id="btn-apoiar">Apoiar com R$ 0,99</button>
-      <div class="msg" id="msg"></div>
+      <a class="btn" href="https://discord.gg/JMvSut4uhJ" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.056c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        Entrar no Discord
+      </a>
       <div class="perks">
-        <div class="perk"><strong>Selo Apoiador</strong><span>Badge no seu perfil e no player.</span></div>
-        <div class="perk"><strong>Modo sem anúncios</strong><span>Esconde dicas de verificação e destaca o player.</span></div>
-        <div class="perk"><strong>Lista de progresso maior</strong><span>Até 120 títítulos em "Continuar assistindo".</span></div>
+        <div class="perk"><strong>Comunidade NOIR</strong><span>Converse com outros usuários e os criadores.</span></div>
+        <div class="perk"><strong>Sugestões e bugs</strong><span>Reporte problemas e peça novos títulos.</span></div>
+        <div class="perk"><strong>Avisos de atualização</strong><span>Saiba quando novos títulos forem adicionados.</span></div>
       </div>
     </div>
   </main>
 </div>
 <footer>NOIR — criado por nexuusz e nakaw. Obrigado por apoiar.</footer>
-<script>
-(() => {
-  'use strict';
-  const $ = (id) => document.getElementById(id);
-  const msg = $('msg');
-  function show(texto, tipo) { msg.textContent = texto; msg.className = 'msg show ' + tipo; }
-  // verifica login ao carregar
-  (async () => {
-    try {
-      const r = await fetch('/api/me', { cache: 'no-store' });
-      const d = await r.json();
-      if (!d.user) {
-        show('Faça login para apoiar o projeto.', 'err');
-      }
-    } catch {}
-  })();
-
-  $('btn-apoiar').addEventListener('click', async () => {
-    const btn = $('btn-apoiar');
-    btn.disabled = true; btn.textContent = 'Processando…';
-    try {
-      const r = await fetch('/api/support', { method: 'POST' });
-      const d = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(d.error || 'falhou');
-      show('Obrigado! Vocêê agora é Apoiador do NOIR. Seu selo Modo sem anúncios está ativo.', 'ok');
-    } catch (e) {
-      show(e.message || 'Não foi possível concluir. Faça login e tente de novo.', 'err');
-    } finally {
-      btn.disabled = false; btn.textContent = 'Apoiar com R$ 0,99';
-    }
-  });
-})();
-</script>
 </body>
 </html>

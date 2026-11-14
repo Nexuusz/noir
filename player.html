@@ -437,7 +437,7 @@
 
 <main class="stage">
   <div class="frame" id="frame">
-    <iframe id="player" allowfullscreen allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="no-referrer"></iframe>
+    <iframe id="player" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation" allowfullscreen allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="no-referrer"></iframe>
 
     <div class="load" id="load">
       <div id="spinbox"><div class="ring"></div></div>
@@ -462,6 +462,7 @@
   <span class="sp"></span>
   <span><kbd>Ctrl</kbd> + <kbd>←</kbd> <kbd>→</kbd> troca de servidor</span>
   <span><kbd>Ctrl</kbd> + <kbd>R</kbd> recarrega a fonte</span>
+  <span style="color:#ff8a8a;font-weight:700">⚠ Anúncios do player são do servidor. Instale uBlock Origin para bloquear.</span>
 </div>
 
 <div class="scrim" id="scrim"></div>
