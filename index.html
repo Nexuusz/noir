@@ -240,14 +240,14 @@
   .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
 
   .hero-strip{
-    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-    max-width:600px;margin-top:32px;padding-top:22px;
-    border-top:1px solid rgba(255,255,255,.1);
+    display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+    max-width:640px;margin-top:32px;padding-top:22px;
+    border-top:1px solid rgba(255,255,255,.1);gap:0;
   }
-  .hero-strip div{padding-left:20px;border-left:1px solid rgba(255,255,255,.1);min-width:0}
+  .hero-strip div{padding-left:16px;border-left:1px solid rgba(255,255,255,.1);min-width:0}
   .hero-strip div:first-child{padding-left:0;border-left:none}
-  .hero-strip span{display:block;font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--dimmer)}
-  .hero-strip strong{display:block;margin-top:5px;font-size:14px;font-weight:800;letter-spacing:-.01em}
+  .hero-strip span{display:block;font-size:8.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--dimmer)}
+  .hero-strip strong{display:block;margin-top:6px;font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--gold-hi);font-variant-numeric:tabular-nums}
 
   /* --------- seções --------- */
   section{padding-top:48px}
@@ -795,9 +795,11 @@
       </a>
     </div>
     <div class="hero-strip">
-      <div><span>Títulos dublados</span><strong id="s-films"></strong></div>
-      <div><span>Filmes  Séries</span><strong id="s-split"></strong></div>
-      <div><span>Animes  Desenhos</span><strong id="s-anim"></strong></div>
+      <div><span>Títulos</span><strong id="s-films"></strong></div>
+      <div><span>Filmes</span><strong id="s-filmes"></strong></div>
+      <div><span>Séries</span><strong id="s-series"></strong></div>
+      <div><span>Animes</span><strong id="s-animes"></strong></div>
+      <div><span>Desenhos</span><strong id="s-desenhos"></strong></div>
     </div>
   </div>
 </section>
@@ -1854,12 +1856,14 @@
       return;
     }
 
-    $('s-films').textContent = String(CATALOGO.length);
-
     const c = { movie: 0, series: 0, anime: 0, desenho: 0 };
     for (const m of CATALOGO) c[tipoDe(m)]++;
-    $('s-split').textContent = `${c.movie}  ${c.series}`;
-    $('s-anim').textContent = `${c.anime}  ${c.desenho}`;
+
+    $('s-films').textContent = String(CATALOGO.length);
+    $('s-filmes').textContent = String(c.movie);
+    $('s-series').textContent = String(c.series);
+    $('s-animes').textContent = String(c.anime);
+    $('s-desenhos').textContent = String(c.desenho);
 
     /* destaque do dia: gira entre os mais populares com arte de fundo, estvel dentro do dia */
     destaques = CATALOGO
