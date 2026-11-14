@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Assistindo — NOIR</title>
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#07080b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Audiowide&display=swap" rel="stylesheet">
+<style>
+  [hidden]{display:none!important}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --bg:#07080b;
+    --panel:#101218;
+    --gold:#a855f7;
+    --gold-hi:#c084fc;
+    --gold-deep:#7c3aed;
+    --text:#f4f5f8;
+    --dim:#9aa0ae;
+    --dimmer:#666c7a;
+    --line:rgba(255,255,255,.07);
+    --line-2:rgba(255,255,255,.14);
+    --ease:cubic-bezier(.22,.9,.24,1);
+  }
+
+  html,body{height:100%}
+  body{
+    display:flex;flex-direction:column;height:100dvh;overflow:hidden;
+    background:var(--bg);color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    font-feature-settings:"ss01","cv11";
+  }
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  svg{display:block;flex:none}
+
+  .bgart{
+    position:fixed;inset:-10%;z-index:0;pointer-events:none;
+    background-size:cover;background-position:center;
+    filter:blur(100px) brightness(.26) saturate(150%);
+    transform:scale(1.2);
+  }
+  .veil{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(125% 105% at 50% 40%,rgba(7,8,11,.26) 18%,rgba(4,5,8,.97) 100%);
+  }
+
+  /* ───────── topo ───────── */
+  header{
+    position:relative;z-index:30;flex:none;
+    display:flex;align-items:center;gap:14px;
+    height:62px;padding:0 clamp(12px,2.2vw,20px);
+    background:linear-gradient(180deg,rgba(7,8,11,.99),rgba(7,8,11,.8) 74%,rgba(7,8,11,0));
+  }
+
+  .logo{display:inline-flex;align-items:center;gap:9px;flex:none}
+  .logo .mark{
+    width:31px;height:31px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    box-shadow:0 6px 16px rgba(245,184,61,.3),inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .logo .mark svg{width:12px;height:12px;fill:#1a1204;margin-left:1px}
+  .logo .txt{font-size:15px;font-weight:900;letter-spacing:-.03em;font-family:'Audiowide',sans-serif}
+  .logo .txt b{color:var(--gold)}
+
+  .divider{width:1px;height:24px;background:var(--line-2);flex:none}
+
+  .tbox{min-width:0;display:flex;flex-direction:column;gap:3px}
+  .tbox strong{
+    font-size:13.5px;font-weight:700;letter-spacing:-.01em;line-height:1.15;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .tbox .subline{
+    display:flex;align-items:center;gap:6px;
+    font-size:10.5px;font-weight:600;color:var(--dim);letter-spacing:.02em;
+    white-space:nowrap;
+  }
+  .tbox .subline i{
+    font-style:normal;height:15px;padding:0 5px;display:inline-flex;align-items:center;border-radius:3px;
+    font-size:8px;font-weight:900;letter-spacing:.09em;color:#ffd88f;
+    border:1px solid rgba(245,184,61,.32);background:rgba(245,184,61,.1);
+  }
+  .tbox .subline em{font-style:normal;color:#8b919e}
+
+  .bar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+
+  .icon{
+    width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
+    border:1px solid var(--line);background:rgba(255,255,255,.05);color:#c7ccd7;
+    transition:background .18s,border-color .18s,color .18s,transform .14s var(--ease);
+  }
+  .icon:hover{background:rgba(255,255,255,.11);border-color:rgba(245,184,61,.45);color:#fff}
+  .icon:active{transform:scale(.94)}
+  .icon svg{width:15px;height:15px}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:38px;padding:0 15px;border-radius:10px;
+    font-size:12.5px;font-weight:700;white-space:nowrap;
+    border:1px solid var(--line-2);background:rgba(255,255,255,.055);
+    transition:background .18s,border-color .18s,filter .18s,transform .14s var(--ease);
+  }
+  .btn:hover{background:rgba(255,255,255,.11)}
+  .btn:active{transform:scale(.975)}
+  .btn svg{width:13px;height:13px}
+  .btn-gold{
+    height:40px;padding:0 16px;border-radius:10px;
+    border-color:transparent;color:#1a1204;
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    box-shadow:0 8px 22px rgba(245,184,61,.28),inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .btn-gold:hover{background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));filter:brightness(1.08)}
+
+  .acc{
+    display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 11px;border-radius:10px;
+    border:1px solid var(--line);background:rgba(255,255,255,.05);
+    font-size:12px;font-weight:700;color:#cfd4de;transition:background .18s,border-color .18s;
+  }
+  .acc:hover{background:rgba(255,255,255,.1);border-color:rgba(245,184,61,.42)}
+  .acc .av{
+    width:22px;height:22px;border-radius:6px;display:grid;place-items:center;flex:none;
+    font-size:10px;font-weight:900;color:#1a1204;
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+  }
+  .acc .av.ghost{background:rgba(255,255,255,.1);color:#b9bec9}
+  .acc .nm{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ───────── faixa de servidores ───────── */
+  .dock{
+    position:relative;z-index:29;flex:none;
+    display:flex;align-items:center;gap:10px;
+    padding:0 clamp(12px,2.2vw,20px) 10px;
+  }
+
+  .dub{
+    display:inline-flex;align-items:center;gap:6px;flex:none;
+    height:28px;padding:0 10px;border-radius:7px;
+    font-size:9.5px;font-weight:900;letter-spacing:.14em;
+    color:#ffd85f;border:1px solid rgba(245,184,61,.42);background:rgba(245,184,61,.11);
+  }
+  .dub svg{width:11px;height:11px;flex:none}
+    display:none;align-items:center;gap:6px;flex:none;
+    height:28px;padding:0 10px;border-radius:7px;
+    font-size:9.5px;font-weight:900;letter-spacing:.14em;
+    color:#a8f0c9;border:1px solid rgba(61,220,132,.42);background:rgba(61,220,132,.11);
+  }
+  .adfree.show{display:inline-flex}
+
+  .chips{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0}
+  .chips::-webkit-scrollbar{display:none}
+
+  .chip{
+    flex:none;display:inline-flex;align-items:center;gap:6px;
+    height:28px;padding:0 11px;border-radius:999px;
+    font-size:11.5px;font-weight:700;color:#b2b8c5;
+    border:1px solid var(--line);background:rgba(255,255,255,.04);
+    transition:all .18s var(--ease);
+  }
+  .chip:hover{background:rgba(255,255,255,.1);color:#fff}
+  .chip[aria-pressed="true"]{
+    border-color:rgba(245,184,61,.55);background:rgba(245,184,61,.13);color:#ffd88f;
+  }
+  .chip .dot{width:6px;height:6px;border-radius:50%;background:#4d525e;flex:none}
+  .chip .dot.ok{background:#3ddc84;box-shadow:0 0 7px rgba(61,220,132,.85)}
+  .chip .dot.bad{background:#ff5a5a;box-shadow:0 0 7px rgba(255,90,90,.7)}
+  .chip .dot.wait{background:var(--gold);animation:pulse 1.1s infinite}
+  @keyframes pulse{50%{opacity:.25}}
+
+  .dock-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
+
+  .epnav{
+    display:inline-flex;align-items:center;gap:4px;flex:none;
+    height:28px;padding:3px;border-radius:8px;
+    border:1px solid var(--line);background:rgba(255,255,255,.04);
+  }
+  .epnav button{
+    height:22px;padding:0 9px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;
+    font-size:10.5px;font-weight:800;color:#b2b8c5;transition:background .16s,color .16s;
+  }
+  .epnav button:hover:not(:disabled){background:rgba(255,255,255,.1);color:#fff}
+  .epnav button:disabled{opacity:.3;cursor:default}
+  .epnav svg{width:10px;height:10px}
+  .epnav .pos{
+    padding:0 7px;font-size:10px;font-weight:800;color:#8b919e;letter-spacing:.05em;white-space:nowrap;
+  }
+
+  /* ───────── palco ───────── */
+  .stage{
+    position:relative;z-index:10;flex:1;min-height:0;
+    display:flex;
+    padding:0 clamp(0px,1.2vw,12px) clamp(0px,1.2vw,12px);
+  }
+  .frame{
+    position:relative;flex:1;min-height:0;
+    background:#000;border-radius:11px;overflow:hidden;
+    box-shadow:0 26px 70px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.055);
+  }
+  .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000}
+
+  .load{
+    position:absolute;inset:0;z-index:5;
+    display:grid;place-items:center;align-content:center;gap:13px;text-align:center;padding:24px;
+    background:radial-gradient(circle at 50% 44%,#0e1017 0%,#07080b 72%);
+    transition:opacity .45s ease;
+  }
+  .load.hide{opacity:0;pointer-events:none}
+
+  .ring{
+    width:36px;height:36px;border-radius:50%;
+    border:2px solid rgba(255,255,255,.09);border-top-color:var(--gold);
+    animation:spin .85s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .load p{font-size:13px;font-weight:700;color:#d7dbe4;letter-spacing:-.01em}
+  .load small{font-size:11.5px;line-height:1.65;color:#666c7a;max-width:42ch}
+
+  .err{display:none;flex-direction:column;align-items:center;gap:12px;text-align:center}
+  .err.show{display:flex}
+  .err .ico{
+    width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+    border:1px solid rgba(255,90,90,.35);background:rgba(255,90,90,.12);color:#ff8a8a;
+  }
+  .err .ico svg{width:19px;height:19px}
+  .err strong{font-size:14px;font-weight:800}
+  .err p{font-size:11.5px;line-height:1.65;color:#7d838f;max-width:44ch;font-weight:500}
+  .err a{
+    display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:9px;
+    font-size:11.5px;font-weight:800;color:#1a1204;
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+  }
+  .err a svg{width:12px;height:12px}
+
+  /* ───────── rodapé de dicas ───────── */
+  .hint{
+    position:relative;z-index:20;flex:none;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:2px clamp(12px,2.2vw,20px) 9px;
+    font-size:10.5px;font-weight:500;color:#5b6170;
+  }
+  .hint b{color:#9096a2;font-weight:700}
+  .hint .sp{margin-left:auto}
+  .hint span{display:inline-flex;align-items:center;gap:4px}
+  .hint kbd{
+    font-family:inherit;font-size:10px;color:#b9bec9;
+    border:1px solid rgba(255,255,255,.14);border-radius:4px;
+    padding:1px 5px;background:rgba(255,255,255,.05);
+  }
+
+  /* ───────── gaveta ───────── */
+  .scrim{
+    position:fixed;inset:0;z-index:60;background:rgba(3,4,7,.72);
+    backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .28s;
+  }
+  .scrim.open{opacity:1;pointer-events:auto}
+
+  .drawer{
+    position:fixed;top:0;right:0;bottom:0;z-index:61;
+    width:min(410px,92vw);
+    display:flex;flex-direction:column;
+    background:linear-gradient(180deg,#0e1016,#090a0f);
+    border-left:1px solid var(--line);
+    box-shadow:-30px 0 70px rgba(0,0,0,.72);
+    transform:translateX(103%);
+    transition:transform .36s var(--ease);
+  }
+  .drawer.open{transform:none}
+
+  .dhead{
+    flex:none;padding:18px 20px 16px;border-bottom:1px solid var(--line);
+    display:flex;align-items:flex-start;gap:12px;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;
+    font-size:9px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-hi);
+  }
+  .eyebrow::before{content:'';width:16px;height:1.5px;border-radius:2px;background:var(--gold)}
+  .dhead h3{font-size:16px;font-weight:800;letter-spacing:-.025em;line-height:1.1}
+  .dhead p{margin-top:4px;font-size:11px;font-weight:600;color:var(--dim)}
+
+  .dclose{
+    margin-left:auto;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none;
+    border:1px solid var(--line);color:#a9aeba;transition:all .18s;
+  }
+  .dclose:hover{background:rgba(255,255,255,.1);color:#fff;transform:rotate(90deg)}
+
+  .dbody{padding:16px 14px 22px;overflow-y:auto;flex:1}
+  .dbody::-webkit-scrollbar{width:7px}
+  .dbody::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:4px}
+
+  .dlabel{
+    display:flex;align-items:center;gap:8px;margin:4px 0 11px;
+    font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:#5b6170;
+  }
+  .dlabel::after{content:'';flex:1;height:1px;background:var(--line)}
+  .dlabel + .dlabel{margin-top:18px}
+
+  .srv{
+    display:grid;grid-template-columns:34px minmax(0,1fr) 8px;align-items:center;gap:11px;
+    width:100%;min-height:62px;padding:10px 11px;margin-bottom:7px;border-radius:11px;text-align:left;
+    border:1px solid var(--line);background:rgba(255,255,255,.03);
+    transition:background .18s,border-color .18s,transform .16s var(--ease);
+  }
+  .srv:hover{background:rgba(255,255,255,.07);transform:translateX(-2px)}
+  .srv[aria-pressed="true"]{
+    border-color:rgba(245,184,61,.55);
+    background:linear-gradient(100deg,rgba(245,184,61,.13),rgba(245,184,61,.04));
+  }
+  .srv .ico{
+    width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+    font-size:11px;font-weight:900;letter-spacing:-.02em;
+    color:#c3c8d3;background:rgba(255,255,255,.08);
+  }
+  .srv .ico.gold,
+  .srv[aria-pressed="true"] .ico{
+    color:#1a1204;background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    box-shadow:0 5px 14px rgba(245,184,61,.24);
+  }
+  .srv .meta{min-width:0}
+  .srv .meta strong{display:block;font-size:12.5px;font-weight:700;color:#eceef3}
+  .srv .tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+  .srv .tags span{
+    height:16px;padding:0 5px;display:inline-flex;align-items:center;border-radius:3px;
+    font-size:8px;font-weight:900;letter-spacing:.07em;color:#98a0af;
+    border:1px solid rgba(255,255,255,.13);
+  }
+  .srv .tags span.g{color:#ffd88f;border-color:rgba(245,184,61,.36);background:rgba(245,184,61,.1)}
+  .srv .st{width:7px;height:7px;border-radius:50%;background:#4d525e}
+  .srv .st.ok{background:#3ddc84;box-shadow:0 0 8px rgba(61,220,132,.8)}
+  .srv .st.bad{background:#ff5a5a;box-shadow:0 0 8px rgba(255,90,90,.6)}
+  .srv .st.wait{background:var(--gold);animation:pulse 1.1s infinite}
+
+  .note{
+    margin-top:14px;padding:12px 13px;border-radius:11px;
+    border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.026);
+    font-size:11px;line-height:1.7;color:#7d838f;
+  }
+  .note b{color:#c8cdd7;font-weight:700}
+  .note span{display:block;margin-top:7px}
+
+  /* ───────── responsivo ───────── */
+  @media (max-width:1020px){
+    .acc .nm{display:none}
+  }
+  @media (max-width:860px){
+    header{height:56px;gap:10px}
+    .tbox .subline{display:none}
+    .divider{display:none}
+    .stage{padding:0}
+    .frame{border-radius:0}
+    .btn.hide-sm{display:none}
+    .hint span:nth-of-type(n+2){display:none}
+    .epnav .pos{display:none}
+  }
+  @media (max-width:620px){
+    .logo .txt{display:none}
+    .acc{display:none}
+    .dock{gap:7px;padding-bottom:8px}
+    .chips .chip:nth-child(n+4){display:none}
+    .dub svg{width:11px;height:11px;flex:none}
+    .load small{display:none}
+    .hint{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="bgart" id="bgart"></div>
+<div class="veil"></div>
+
+<header>
+  <a class="logo" href="index.html" title="Página inicial">
+    <span class="mark"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+    <span class="txt">NOIR</span>
+  </a>
+  <span class="divider"></span>
+  <div class="tbox">
+    <strong id="ttl">Carregando……</strong>
+    <span class="subline">
+      <span id="sub">HD 1080p</span>
+      <i>DUBLADO</i>
+      <em id="fonte"></em>
+    </span>
+  </div>
+  <div class="bar-right">
+    <a class="icon" href="index.html" title="Início" aria-label="Início">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+    </a>
+    <a class="acc" id="acc" href="login.html">
+      <span class="av ghost" id="acc-av">?</span>
+      <span class="nm" id="acc-nm">Entrar</span>
+    </a>
+    <a class="icon" id="voltar" href="index.html" title="Voltar para a ficha" aria-label="Voltar para a ficha">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m15 18-6-6 6-6"/></svg>
+    </a>
+    <a class="btn hide-sm" id="open-tab" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4 10 14M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+      Nova aba
+    </a>
+    <button class="icon" id="fs" title="Tela cheia" aria-label="Tela cheia">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="dock">
+  <span class="dub">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M16 9a4 4 0 0 1 0 6"/></svg>
+    DUBLADO
+  </span>
+  <span class="adfree" id="adfree" hidden>SEM ANÚNCIOS</span>
+  <div class="chips" id="chips"></div>
+  <div class="dock-right">
+    <div class="epnav" id="epnav" hidden>
+      <button id="ep-prev" title="Episódio anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 6-6 6 6 6"/></svg>
+        Anterior
+      </button>
+      <span class="pos" id="ep-pos">T1 · E1</span>
+      <button id="ep-next" title="Próximo episódio">
+        Próximo
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 6 6 6-6 6"/></svg>
+      </button>
+    </div>
+    <button class="btn btn-ghost" id="open-eps" hidden>Episodios</button>
+    <button class="btn btn-gold" id="open-drawer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="7" height="7" rx="1.6"/><rect x="14" y="4" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></svg>
+      Servidores
+    </button>
+  </div>
+</div>
+
+<main class="stage">
+  <div class="frame" id="frame">
+    <iframe id="player" allowfullscreen allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="no-referrer"></iframe>
+
+    <div class="load" id="load">
+      <div id="spinbox"><div class="ring"></div></div>
+      <p id="load-msg">Carregando… player…</p>
+      <small id="load-sub">Fonte dublada em português. Se demorar, troque de servidor no menu acima.</small>
+
+      <div class="err" id="err">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.8 2.5 17.2A1.9 1.9 0 0 0 4.2 20h15.6a1.9 1.9 0 0 0 1.7-2.8L13.7 3.8a1.9 1.9 0 0 0-3.4 0z"/></svg></span>
+        <strong>O servidor está demorando</strong>
+        <p>Troque para outra fonte no menu <b>Servidores</b> — todo títítulo tem mais de um player dublado.</p>
+        <a id="err-tab" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4 10 14M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+          Abrir em nova aba
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="hint">
+  <b>Dica:</b> cada servidor é um player diferente. Se um travar ou pedir verificação, troque para o próximo.
+  <span class="sp"></span>
+  <span><kbd>Ctrl</kbd> + <kbd>←</kbd> <kbd>→</kbd> troca de servidor</span>
+  <span><kbd>Ctrl</kbd> + <kbd>R</kbd> recarrega a fonte</span>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Servidores">
+  <div class="dhead">
+    <div>
+      <span class="eyebrow">Escolha a fonte</span>
+      <h3>Servidores</h3>
+      <p id="drawer-sub">todos em áudio dublado</p>
+    </div>
+    <button class="dclose" id="close-drawer" aria-label="Fechar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="dbody">
+    <div class="dlabel">Disponíveis agora</div>
+    <div id="list"></div>
+    <div class="note" id="note">
+      <b>Não abriu?</b> O SuperFlix mostra uma verificação rápida na primeira visita — marque a caixinha e aguarde; o títítulo entra em seguida.
+      <span>Se continuar travado, use <b>Abrir em nova aba</b> ou escolha o espelho.</span>
+    </div>
+  </div>
+</aside>
+<aside class="drawer" id="drawer-eps" aria-label="Episodios">
+  <div class="dhead">
+    <div>
+      <span class="eyebrow">Episodios</span>
+      <h3 id="eps-title">Temporadas</h3>
+      <p>Selecione a temporada e o episodio</p>
+    </div>
+    <button class="dclose" id="close-eps" aria-label="Fechar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="dbody">
+    <div class="dlabel">Temporada</div>
+    <select id="eps-season" style="width:100%;height:36px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:#e9ecf2;padding:0 12px;margin-bottom:12px"></select>
+    <div class="dlabel">Episodios</div>
+    <div id="eps-list"></div>
+  </div>
+</aside>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+
+  const imdb = params.get('id') || 'tt0317219';
+  const tmdb = params.get('tmdb') || '';
+  const títítulo = params.get('t') || 'Cars';
+  const ano = params.get('y') || '2006';
+  const generosUrl = params.get('g') || '';
+  const ehSerie = params.get('tipo') === 'series';
+
+  let temporada = Number(params.get('temp')) || 1;
+  let episodio = Number(params.get('ep')) || 1;
+
+  /* ───────── fontes brasileiras, somente dublado ───────── */
+  const SERVIDORES = [
+    { key: 'superflix',  nome: 'SuperFlix',      sigla: 'SF', nota: 'Dublado · BR', principal: true,
+      url: (c) => ehSerie
+        ? `https://superflixapi.boats/serie/${c.tmdb || c.imdb}/${temporada}/${episodio}`
+        : `https://superflixapi.boats/filme/${c.tmdb || c.imdb}` },
+    { key: 'superflix2', nome: 'SuperFlix 2',    sigla: 'S2', nota: 'Espelho BR',
+      url: (c) => ehSerie
+        ? `https://superflixapi.cv/serie/${c.tmdb || c.imdb}/${temporada}/${episodio}`
+        : `https://superflixapi.cv/filme/${c.tmdb || c.imdb}` },
+    { key: 'stream',     nome: 'StreamBetter',   sigla: 'SB', nota: 'Dublado · BR', precisaTmdb: true,
+      url: (c) => ehSerie
+        ? `https://streambetter.shop/serie/${c.tmdb}/${temporada}/${episodio}`
+        : `https://streambetter.shop/filme/${c.tmdb}` },
+    { key: 'stream2',    nome: 'StreamBetter 2', sigla: 'S2', nota: 'Espelho BR', precisaTmdb: true,
+      url: (c) => ehSerie
+        ? `https://streambetter.lat/serie/${c.tmdb}/${temporada}/${episodio}`
+        : `https://streambetter.lat/filme/${c.tmdb}` },
+  ];
+
+  const ctx = { imdb, tmdb };
+  const lista = SERVIDORES.filter((s) => !s.precisaTmdb || tmdb);
+  const status = new Map();
+
+  const iframe = $('player');
+  const load = $('load');
+  const err = $('err');
+  const drawer = $('drawer');
+  const scrim = $('scrim');
+
+  /* ───────── topo ───────── */
+  const rotuloEp = () => (ehSerie ? `T${temporada} · E${episodio} · ` : '');
+
+  $('ttl').textContent = títítulo;
+  $('sub').textContent = `${rotuloEp()}${ano} · 1080p`;
+  document.title = `${títítulo}${ehSerie ? ` — T${temporada} E${episodio}` : ` (${ano})`} — NOIR`;
+
+  $('epnav').hidden = !ehSerie;
+  $('ep-pos').textContent = `T${temporada} · E${episodio}`;
+
+  const urlFicha =
+    `filme.html?id=${encodeURIComponent(imdb)}&t=${encodeURIComponent(títítulo)}` +
+    `&y=${encodeURIComponent(ano)}` + (tmdb ? `&tmdb=${encodeURIComponent(tmdb)}` : '') +
+    (ehSerie ? '&tipo=series' : '') +
+    (poster ? `&p=${encodeURIComponent(poster)}` : '');
+  $('voltar').href = urlFicha;
+
+  const arte = poster || `https://images.metahub.space/background/medium/${imdb}/img`;
+  $('bgart').style.backgroundImage = `url("${arte}")`;
+
+  /* ───────── temporadas / vizinhos ───────── */
+  let episodios = [];
+
+  async function carregarEpisodios() {
+    if (!ehSerie) return;
+    try {
+      const r = await fetch(`https://v3-cinemeta.strem.io/meta/series/${encodeURIComponent(imdb)}.json`);
+      const d = await r.json();
+      const videos = d?.meta?.videos || [];
+      episodios = videos
+        .filter((v) => v.season != null && v.number != null)
+        .map((v) => ({ t: Number(v.season), e: Number(v.number) }))
+        .sort((a, b) => a.t - b.t || a.e - b.e);
+
+      const fundo = d?.meta?.background || d?.meta?.poster;
+      if (fundo) $('bgart').style.backgroundImage = `url("${fundo}")`;
+      if (d?.meta?.name && !títítulo) {  // keep translated title from URL
+        $('ttl').textContent = d.meta.name;
+        document.title = `${d.meta.name} — T${temporada} E${episodio} — NOIR`;
+      }
+    } catch { episodios = []; }
+
+    atualizarNav();
+  }
+
+  function atualizarNav() {
+    if (!ehSerie) return;
+    const i = episodios.findIndex((x) => x.t === temporada && x.e === episodio);
+    $('ep-prev').disabled = i <= 0;
+    $('ep-next').disabled = i < 0 || i >= episodios.length - 1;
+  }
+
+  function irPara(t, e) {
+    temporada = t;
+    episodio = e;
+    const url = new URL(location.href);
+    url.searchParams.set('temp', String(t));
+    url.searchParams.set('ep', String(e));
+    history.replaceState(null, '', url);
+
+    $('sub').textContent = `${rotuloEp()}${ano} · 1080p`;
+    $('ep-pos').textContent = `T${t} · E${e}`;
+    document.title = `${títítulo} — T${t} E${e} — NOIR`;
+    atualizarNav();
+    load_server(atual, { silent: true });
+    salvarProgresso();
+  }
+
+  $('ep-prev').addEventListener('click', () => {
+    const i = episodios.findIndex((x) => x.t === temporada && x.e === episodio);
+    if (i > 0) irPara(episodios[i - 1].t, episodios[i - 1].e);
+  });
+  $('ep-next').addEventListener('click', () => {
+    const i = episodios.findIndex((x) => x.t === temporada && x.e === episodio);
+    if (i >= 0 && i < episodios.length - 1) irPara(episodios[i + 1].t, episodios[i + 1].e);
+  });
+
+  /* ───────── conta e progresso ───────── */
+  let ME = null;
+
+  (async () => {
+    try {
+      const r = await fetch('/api/me', { cache: 'no-store' });
+      const d = await r.json();
+      ME = d.user || null;
+    } catch { ME = null; }
+
+    if (ME) {
+      $('acc').href = 'index.html#continuar';
+      $('acc-nm').textContent = ME.name.split(' ')[0];
+      const av = $('acc-av');
+      av.textContent = ME.name.trim().charAt(0).toUpperCase();
+      av.classList.remove('ghost');
+      $('note').innerHTML =
+        '<b>Progresso salvo.</b> Este títítulo já está em <b>Continuar assistindo</b> na sua conta — o player lembra a série e o episódio.' +
+        '<span>Marque a verificação do SuperFlix se ela aparecer, e troque de espelho se a fonte demorar.</span>';
+      if (ME.supporter || ME.role === 'owner') {
+        const af = $('adfree'); if (af) { af.hidden = false; af.classList.add('show'); }
+        $('note').innerHTML = '<b>Modo sem anúncios ativo.</b> Obrigado por apoiar o NOIR. Troque de espelho se a fonte demorar.';
+      }
+    }
+    salvarProgresso();
+  })();
+
+  let ultimoSalvo = 0;
+
+  function salvarProgresso() {
+    if (!ME) return;
+    const agora = Date.now();
+    if (agora - ultimoSalvo < 1500) return;
+    ultimoSalvo = agora;
+
+    fetch('/api/progress', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        id: imdb,
+        type: ehSerie ? 'series' : 'movie',
+        name: títítulo,
+        poster: poster || `https://images.metahub.space/background/medium/${imdb}/img`,
+        year: Number(ano) || 0,
+        tmdb,
+        season: ehSerie ? temporada : 0,
+        episode: ehSerie ? episodio : 0,
+        position: 0,
+        duration: 0,
+        genres: generosUrl ? generosUrl.split(',') : [],
+      }),
+    }).catch(() => {});
+  }
+
+  /* ───────── servidor atual ───────── */
+  const salvo = localStorage.getItem('fehd.server');
+  const pedido = params.get('s');
+  const existe = (k) => lista.some((s) => s.key === k);
+
+  let atual =
+    (pedido && existe(pedido) && pedido) ||
+    (salvo && existe(salvo) && salvo) ||
+    lista[0].key;
+
+  const porChave = (k) => lista.find((s) => s.key === k) || lista[0];
+
+  /* ───────── carregar ───────── */
+  let prazo = 0;
+
+  function load_server(key, opts = {}) {
+    const s = porChave(key);
+    atual = s.key;
+    if (!opts.silent) localStorage.setItem('fehd.server', s.key);
+
+    const url = s.url(ctx);
+    $('open-tab').href = url;
+    $('err-tab').href = url;
+    $('fonte').textContent = s.nome;
+
+    clearTimeout(prazo);
+    err.classList.remove('show');
+    $('spinbox').style.display = '';
+    load.classList.remove('hide');
+    $('load-msg').textContent = `Abrindo ${s.nome}${ehSerie ? ` · T${temporada} E${episodio}` : ''}…`;
+    $('load-sub').textContent = s.principal
+      ? 'Fonte dublada brasileira. Se aparecer verificação, marque a caixinha e aguarde.'
+      : 'Servidor brasileiro de apoio. Se demorar, troque de fonte no menu.';
+
+    iframe.src = 'about:blank';
+    setTimeout(() => { iframe.src = url; }, 60);
+
+    paint_chips();
+    if (drawer.classList.contains('open')) paint_list();
+
+    prazo = setTimeout(() => {
+      $('spinbox').style.display = 'none';
+      $('load-msg').textContent = `${s.nome} está demorando…`;
+      err.classList.add('show');
+    }, 18000);
+  }
+
+  iframe.addEventListener('load', () => {
+    if (!iframe.src || iframe.src === 'about:blank') return;
+    clearTimeout(prazo);
+    setTimeout(() => load.classList.add('hide'), 400);
+  });
+
+  /* ───────── chips ───────── */
+  function paint_chips() {
+    const caixa = $('chips');
+    caixa.innerHTML = '';
+    lista.forEach((s) => {
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.setAttribute('aria-pressed', String(s.key === atual));
+      b.title = `${s.nome} — ${s.nota}`;
+      const st = status.get(s.key);
+      b.innerHTML = `<span class="dot ${st === 'ok' ? 'ok' : st === 'bad' ? 'bad' : st === 'wait' ? 'wait' : ''}"></span>${s.nome}`;
+      b.addEventListener('click', () => load_server(s.key));
+      caixa.appendChild(b);
+    });
+  }
+
+  /* ───────── gaveta ───────── */
+  function abrir_gaveta() {
+    drawer.classList.add('open');
+    scrim.classList.add('open');
+    paint_list();
+    ping_all();
+  }
+  function fechar_gaveta() {
+    drawer.classList.remove('open');
+    scrim.classList.remove('open');
+  }
+  $('open-drawer').addEventListener('click', abrir_gaveta);
+  $('close-drawer').addEventListener('click', fechar_gaveta);
+  scrim.addEventListener('click', () => { fechar_gaveta(); fecharEps(); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') fechar_gaveta();
+    if (!e.ctrlKey) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); cycle(1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); cycle(-1); }
+    else if (e.key === 'r' || e.key === 'R') { e.preventDefault(); load_server(atual, { silent: true }); }
+  });
+
+  function cycle(dir) {
+    const i = lista.findIndex((s) => s.key === atual);
+    load_server(lista[(i + dir + lista.length) % lista.length].key);
+  }
+
+  function srv_row(s) {
+    const st = status.get(s.key);
+    const b = document.createElement('button');
+    b.className = 'srv';
+    b.setAttribute('aria-pressed', String(s.key === atual));
+    b.innerHTML = `
+      <span class="ico ${s.principal ? 'gold' : ''}">${s.sigla}</span>
+      <span class="meta">
+        <strong>${s.nome}${s.key === atual ? ' · em uso' : ''}</strong>
+        <span class="tags">
+          <span class="g">HD</span>
+          <span class="g">${s.nota.toUpperCase()}</span>
+          ${s.principal ? '<span class="g">PRINCIPAL</span>' : ''}
+        </span>
+      </span>
+      <span class="st ${st === 'ok' ? 'ok' : st === 'bad' ? 'bad' : st === 'wait' ? 'wait' : ''}"></span>`;
+    b.addEventListener('click', () => { load_server(s.key); fechar_gaveta(); });
+    return b;
+  }
+
+  function paint_list() {
+    const caixa = $('list');
+    caixa.innerHTML = '';
+    $('drawer-sub').textContent = ehSerie
+      ? `T${temporada} E${episodio} · todos em áudio dublado`
+      : 'todos em áudio dublado';
+    lista.forEach((s) => caixa.appendChild(srv_row(s)));
+  }
+
+  /* ───────── ping dos servidores ───────── */
+  async function ping_one(s) {
+    status.set(s.key, 'wait');
+    paint_chips();
+    try {
+      const alvo = encodeURIComponent(s.url(ctx));
+      const r = await fetch(`/api/ping?u=${alvo}`, { cache: 'no-store' });
+      const d = await r.json();
+      status.set(s.key, d.ok ? 'ok' : 'bad');
+    } catch {
+      status.set(s.key, 'bad');
+    }
+    paint_chips();
+    if (drawer.classList.contains('open')) paint_list();
+  }
+
+  let pingado = false;
+  async function ping_all() {
+    if (pingado) return;
+    pingado = true;
+    for (let i = 0; i < lista.length; i += 3) {
+      await Promise.all(lista.slice(i, i + 3).map(ping_one));
+    }
+  }
+
+  /* ───────── tela cheia ───────── */
+  $('fs').addEventListener('click', () => {
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else $('frame').requestFullscreen().catch(() => {});
+  });
+
+  /* ───────── início ───────── */
+  paint_chips();
+  load_server(atual);
+  carregarEpisodios();
+
+  /* episodios drawer */
+  const drawerEps = document.getElementById('drawer-eps');
+  const openEps = document.getElementById('open-eps');
+  const closeEps = document.getElementById('close-eps');
+  const seasonSel = document.getElementById('eps-season');
+  const epsList = document.getElementById('eps-list');
+
+  function abrirEps() {
+    if (!ehSerie) return;
+    drawerEps.classList.add('open');
+    scrim.classList.add('open');
+    pintarEpsDrawer();
+  }
+  function fecharEps() {
+    drawerEps.classList.remove('open');
+    scrim.classList.remove('open');
+  }
+  if (openEps) openEps.addEventListener('click', abrirEps);
+  if (closeEps) closeEps.addEventListener('click', fecharEps);
+
+  function pintarEpsDrawer() {
+    if (!seasonSel || !epsList) return;
+    const seasons = [...new Set(episodios.map((e) => e.t))].sort((a, b) => a - b);
+    seasonSel.innerHTML = seasons.map((t) => `<option value="${t}">Temporada ${t}</option>`).join('');
+    seasonSel.value = temporada;
+    renderEpsList(temporada);
+  }
+  function renderEpsList(t) {
+    if (!epsList) return;
+    const lista = episodios.filter((e) => e.t === Number(t)).sort((a, b) => a.e - b.e);
+    epsList.innerHTML = lista.map((e) => `
+      <button class="ep-row ${e.t === temporada && e.e === episodio ? 'atual' : ''}" data-t="${e.t}" data-e="${e.e}">
+        <span class="n">${String(e.e).padStart(2, '0')}</span>
+        <span class="ttl">Episodio ${e.e}</span>
+        ${e.t === temporada && e.e === episodio ? '<span class="cur">atual</span>' : ''}
+      </button>`).join('');
+    epsList.querySelectorAll('.ep-row').forEach((b) => {
+      b.addEventListener('click', () => {
+        const t = Number(b.dataset.t), e = Number(b.dataset.e);
+        irPara(t, e);
+        fecharEps();
+      });
+    });
+  }
+  if (seasonSel) seasonSel.addEventListener('change', (e) => renderEpsList(e.target.value));
+
+  if (ehSerie && openEps) { openEps.hidden = false; }
+
+  // CSS for ep rows (injected)
+  const st = document.createElement('style');
+  st.textContent = '.ep-row{display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;margin-bottom:6px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:#dfe3ea;font-size:12px;font-weight:700;cursor:pointer;transition:background .16s,border-color .16s}.ep-row:hover{background:rgba(255,255,255,.07);border-color:var(--gold)}.ep-row.atual{border-color:var(--gold);background:rgba(168,85,247,.12)}.ep-row .n{color:var(--dimmer);width:24px}.ep-row .cur{margin-left:auto;font-size:9px;font-weight:900;letter-spacing:.1em;color:var(--gold-hi)}';
+  document.head.appendChild(st);
+})();
+</script>
+</body>
+</html>

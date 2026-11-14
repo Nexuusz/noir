@@ -1,0 +1,16 @@
+{
+  "name": "noir",
+  "version": "2.0.0",
+  "description": "NOIR — Filmes, séries, animes e desenhos dublados em português",
+  "main": "server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "nexuusz e nakaw",
+  "license": "MIT"
+}

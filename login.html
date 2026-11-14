@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar — NOIR</title>
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#07080b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Audiowide&display=swap" rel="stylesheet">
+<style>
+  [hidden]{display:none!important}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --bg:#07080b;
+    --gold:#a855f7;
+    --gold-hi:#c084fc;
+    --gold-deep:#7c3aed;
+    --text:#f4f5f8;
+    --dim:#9aa0ae;
+    --dimmer:#666c7a;
+    --line:rgba(255,255,255,.07);
+    --line-2:rgba(255,255,255,.14);
+    --ease:cubic-bezier(.22,.9,.24,1);
+  }
+
+  body{
+    min-height:100dvh;display:flex;flex-direction:column;
+    background:var(--bg);color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    font-feature-settings:"ss01","cv11";
+    position:relative;overflow-x:hidden;
+    background-image:
+      linear-gradient(rgba(168,85,247,.05) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(168,85,247,.05) 1px,transparent 1px);
+    background-size:44px 44px;
+  }
+  a{color:inherit;text-decoration:none}
+  button,input{font:inherit;color:inherit;background:none;border:none}
+  svg{display:block;flex:none}
+
+  .glow{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(52% 46% at 18% 8%,rgba(245,184,61,.13),transparent 66%),
+      radial-gradient(46% 40% at 88% 82%,rgba(217,140,20,.1),transparent 70%);
+  }
+  .grid-lines{
+    position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.28;
+    background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(70% 60% at 50% 30%,#000,transparent 78%);
+  }
+
+  .wrap{width:min(1080px,100% - 40px);margin-inline:auto;position:relative;z-index:1}
+
+  /* ───────── topo ───────── */
+  header{position:relative;z-index:2;padding:22px 0}
+  .nav{display:flex;align-items:center;gap:14px}
+  .logo{display:inline-flex;align-items:center;gap:10px}
+  .logo .mark{
+    width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    box-shadow:0 6px 18px rgba(245,184,61,.32),inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .logo .mark svg{width:14px;height:14px;fill:#1a1204;margin-left:1px}
+  .logo .txt{font-size:15.5px;font-weight:900;letter-spacing:-.03em;font-family:'Audiowide',sans-serif}
+  .logo .txt b{color:var(--gold)}
+
+  .nav .back{
+    display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px 0 10px;
+    border-radius:9px;border:1px solid var(--line);margin-left:auto;
+    font-size:12px;font-weight:700;color:#a9aeba;
+    transition:background .18s,color .18s,border-color .18s;
+  }
+  .nav .back:hover{background:rgba(255,255,255,.07);color:#fff;border-color:rgba(245,184,61,.4)}
+  .nav .back svg{width:13px;height:13px}
+
+  /* ───────── palco ───────── */
+  main{flex:1;display:grid;grid-template-columns:1.02fr .98fr;gap:48px;align-items:center;padding:24px 0 60px}
+
+  .pitch{max-width:440px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:9.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--gold-hi);line-height:1;margin-bottom:16px;
+  }
+  .eyebrow::before{content:'';width:18px;height:1.5px;border-radius:2px;background:var(--gold)}
+
+  .pitch h1{
+    font-size:clamp(32px,4.4vw,48px);font-weight:900;
+    letter-spacing:-.045em;line-height:1.02;
+  }
+  .pitch h1 b{
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .pitch p{margin-top:16px;font-size:13px;line-height:1.8;color:#9aa0ae}
+
+  .perks{display:flex;flex-direction:column;gap:1px;margin-top:28px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:var(--line)}
+  .perk{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:center;padding:14px 16px;background:#0a0c11}
+  .perk .ic{
+    width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+    border:1px solid rgba(245,184,61,.3);background:rgba(245,184,61,.1);color:var(--gold-hi);
+  }
+  .perk .ic svg{width:14px;height:14px}
+  .perk strong{display:block;font-size:12.5px;font-weight:700}
+  .perk span{display:block;margin-top:3px;font-size:11px;line-height:1.6;color:#6f7583}
+
+  /* ───────── cartão ───────── */
+  .card{
+    position:relative;padding:26px;border-radius:18px;
+    border:1px solid var(--line-2);
+    background:linear-gradient(170deg,rgba(20,23,31,.96),rgba(10,12,17,.98));
+    box-shadow:0 34px 80px rgba(0,0,0,.66),inset 0 1px 0 rgba(255,255,255,.06);
+  }
+
+  .tabs{
+    display:flex;gap:4px;padding:3px;border-radius:11px;
+    border:1px solid var(--line);background:rgba(255,255,255,.035);margin-bottom:22px;
+  }
+  .tabs button{
+    flex:1;height:34px;border-radius:8px;
+    font-size:12px;font-weight:700;color:#aeb4c1;cursor:pointer;
+    transition:background .16s,color .16s,box-shadow .16s;
+  }
+  .tabs button:hover{color:#fff}
+  .tabs button[aria-pressed="true"]{
+    color:#1a1204;background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    box-shadow:0 6px 16px rgba(245,184,61,.25);
+  }
+
+  .field{margin-bottom:14px}
+  .field label{
+    display:block;margin-bottom:7px;
+    font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#6f7583;
+  }
+  .field .box{
+    display:flex;align-items:center;gap:9px;height:44px;padding:0 13px;
+    border-radius:10px;border:1px solid var(--line-2);background:rgba(255,255,255,.04);
+    transition:border-color .18s,background .18s,box-shadow .18s;
+  }
+  .field .box:focus-within{
+    border-color:rgba(245,184,61,.55);background:rgba(255,255,255,.065);
+    box-shadow:0 0 0 3px rgba(245,184,61,.1);
+  }
+  .field .box svg{width:14px;height:14px;color:#5b6170;flex:none}
+  .field .box input{width:100%;font-size:13px;outline:none}
+  .field .box input::placeholder{color:#4e5462}
+  .field .eye{padding:4px;color:#5b6170;cursor:pointer;display:grid;place-items:center;transition:color .16s}
+  .field .eye:hover{color:#a9aeba}
+
+  .row{display:flex;align-items:center;gap:10px;margin:4px 0 18px}
+  .check{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:#8b919e;cursor:pointer}
+  .check input{accent-color:var(--gold);width:13px;height:13px;cursor:pointer}
+  .row .forgot{margin-left:auto;font-size:11.5px;font-weight:700;color:#8b919e;transition:color .16s}
+  .row .forgot:hover{color:var(--gold)}
+
+  .send{
+    width:100%;height:46px;border-radius:11px;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-size:13px;font-weight:800;color:#1a1204;
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    box-shadow:0 12px 28px rgba(245,184,61,.28),inset 0 1px 0 rgba(255,255,255,.4);
+    transition:filter .18s,transform .14s var(--ease);
+  }
+  .send:hover{filter:brightness(1.07)}
+  .send:active{transform:scale(.985)}
+  .send:disabled{filter:grayscale(.4) brightness(.85);cursor:default}
+  .send svg{width:14px;height:14px}
+
+  .msg{
+    display:none;margin-top:14px;padding:11px 13px;border-radius:10px;
+    font-size:11.5px;font-weight:600;line-height:1.6;
+  }
+  .msg.show{display:block}
+  .msg.err{border:1px solid rgba(255,90,90,.35);background:rgba(255,90,90,.1);color:#ffb0b0}
+  .msg.ok{border:1px solid rgba(61,220,132,.32);background:rgba(61,220,132,.1);color:#a8f0c9}
+
+  .fine{margin-top:16px;font-size:10.5px;line-height:1.7;color:#4e5462;text-align:center}
+  .fine a{color:#7d838f;text-decoration:underline;text-underline-offset:2px}
+
+  footer{position:relative;z-index:1;padding:0 0 26px;font-size:10.5px;line-height:1.8;color:#3f444f;text-align:center}
+
+  @media (max-width:900px){
+    main{grid-template-columns:1fr;gap:34px;padding-top:8px}
+    .pitch{max-width:none;order:2}
+    .card{order:1}
+    .perks{display:none}
+  }
+  @media (max-width:560px){
+    .wrap{width:calc(100% - 26px)}
+    .card{padding:20px}
+    .pitch h1{font-size:28px}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow"></div>
+<div class="grid-lines"></div>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="index.html">
+      <span class="mark"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="txt">NOIR</span>
+    </a>
+    <a class="back" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m15 18-6-6 6-6"/></svg>
+      Voltar ao catálogo
+    </a>
+  </div>
+</header>
+
+<div class="wrap">
+  <main>
+    <section class="pitch">
+      <span class="eyebrow">Sua conta</span>
+      <h1>Pare no meio.<br>Volte no <b>mesmo ponto</b>.</h1>
+      <p>Conta gratuita no NOIR guarda o que vocêê está assistindo — filme, série, temporada e episódio — e devolve tudo na tela inicial. Sem cobrança, sem cartão, sem propaganda.</p>
+
+      <div class="perks">
+        <div class="perk">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+          <span>
+            <strong>Continuar assistindo</strong>
+            <span>Abre o site e retoma o episódio exato em que vocêê parou.</span>
+          </span>
+        </div>
+        <div class="perk">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <span>
+            <strong>Uma só lista, três catálogos</strong>
+            <span>Filmes, séries e animes dublados na mesma conta.</span>
+          </span>
+        </div>
+        <div class="perk">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6z"/></svg></span>
+          <span>
+            <strong>Senha guardada com scrypt</strong>
+            <span>Hash com sal por conta, sessão em cookie httpOnly. Só o essencial.</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="tabs" role="group" aria-label="Entrar ou criar conta">
+        <button id="tab-entrar" aria-pressed="true">Entrar</button>
+        <button id="tab-criar" aria-pressed="false">Criar conta</button>
+      </div>
+
+      <form id="form" autocomplete="on" novalidate>
+        <div class="field" id="f-nome" hidden>
+          <label for="nome">Nome</label>
+          <div class="box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            <input id="nome" name="name" type="text" placeholder="Como quer ser chamado" autocomplete="name" maxlength="40">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">E-mail</label>
+          <div class="box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/></svg>
+            <input id="email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" required maxlength="120">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="senha">Senha</label>
+          <div class="box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <input id="senha" name="password" type="password" placeholder="mínimo 6 caracteres" autocomplete="current-password" required minlength="6">
+            <button type="button" class="eye" id="eye" aria-label="Mostrar senha">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="row" id="row-lembrar">
+          <label class="check"><input type="checkbox" id="lembrar" checked> Manter conectado</label>
+          <a class="forgot" href="login.html?modo=criar">Esqueci a senha</a>
+        </div>
+
+        <button class="send" id="send" type="submit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5M15 12H3"/></svg>
+          <span id="send-txt">Entrar na conta</span>
+        </button>
+
+        <div class="msg" id="msg"></div>
+      </form>
+
+      <p class="fine">
+        É grátis e leva 10 segundos. Ao entrar vocêê aceita que a conta guarde apenas nome, e-mail e o progresso dos títítulos.
+      </p>
+    </section>
+  </main>
+</div>
+
+<footer>
+  NOIR não hospeda arquivos. Contas ficam neste servidor, com senha em hash scrypt.
+</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  const proximo = params.get('next') || 'index.html';
+
+  let modo = params.get('modo') === 'criar' ? 'criar' : 'entrar';
+
+  function pintarModo() {
+    const criar = modo === 'criar';
+    $('tab-criar').setAttribute('aria-pressed', String(criar));
+    $('tab-entrar').setAttribute('aria-pressed', String(!criar));
+    $('f-nome').hidden = !criar;
+    $('row-lembrar').hidden = criar;
+    $('send-txt').textContent = criar ? 'Criar conta grátis' : 'Entrar na conta';
+    $('senha').setAttribute('autocomplete', criar ? 'new-password' : 'current-password');
+    document.title = (criar ? 'Criar conta' : 'Entrar') + ' — NOIR';
+    esconder();
+  }
+
+  function esconder() {
+    const m = $('msg');
+    m.classList.remove('show', 'err', 'ok');
+    m.textContent = '';
+  }
+
+  function aviso(texto, tipo = 'err') {
+    const m = $('msg');
+    m.textContent = texto;
+    m.classList.add('show', tipo);
+  }
+
+  $('tab-entrar').addEventListener('click', () => { modo = 'entrar'; pintarModo(); });
+  $('tab-criar').addEventListener('click', () => { modo = 'criar'; pintarModo(); });
+
+  $('eye').addEventListener('click', () => {
+    const s = $('senha');
+    s.type = s.type === 'password' ? 'text' : 'password';
+    $('eye').setAttribute('aria-label', s.type === 'password' ? 'Mostrar senha' : 'Ocultar senha');
+  });
+
+  $('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    esconder();
+
+    const nome = $('nome').value.trim();
+    const email = $('email').value.trim();
+    const senha = $('senha').value;
+
+    if (!email || !senha) return aviso('Preencha e-mail e senha.');
+    if (modo === 'criar' && nome.length < 2) return aviso('Informe um nome com 2 caracteres ou mais.');
+    if (modo === 'criar' && senha.length < 6) return aviso('A senha precisa de pelo menos 6 caracteres.');
+
+    const send = $('send');
+    send.disabled = true;
+    const rotulo = $('send-txt').textContent;
+    $('send-txt').textContent = modo === 'criar' ? 'Criando conta…' : 'Entrando…';
+
+    try {
+      const rota = modo === 'criar' ? '/api/register' : '/api/login';
+      const corpo = modo === 'criar' ? { name: nome, email, password: senha } : { email, password: senha };
+      const r = await fetch(rota, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(corpo),
+      });
+      const d = await r.json().catch(() => ({}));
+
+      if (!r.ok) {
+        aviso(d.error || 'Não deu certo. Tente de novo.');
+      } else {
+        aviso(modo === 'criar' ? `Conta criada. Bem-vindo, ${d.user?.name || nome}!` : `Bem-vindo de volta, ${d.user?.name || ''}!`, 'ok');
+        setTimeout(() => { location.href = proximo; }, 650);
+        return;
+      }
+    } catch {
+      aviso('Servidor fora do ar. Rode node server.mjs e tente de novo.');
+    }
+
+    send.disabled = false;
+    $('send-txt').textContent = rotulo;
+  });
+
+  pintarModo();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel do dono — NOIR</title>
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#07080b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Audiowide&display=swap" rel="stylesheet">
+<style>
+  [hidden]{display:none!important}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#07080b;--panel:#101218;--gold:#a855f7;--gold-hi:#c084fc;--gold-deep:#7c3aed;
+    --text:#f4f5f8;--dim:#9aa0ae;--dimmer:#666c7a;--line:rgba(255,255,255,.07);--line-2:rgba(255,255,255,.14);
+    --ease:cubic-bezier(.22,.9,.24,1);
+  }
+  body{
+    min-height:100dvh;display:flex;flex-direction:column;
+    background:var(--bg);color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+    background-image:linear-gradient(rgba(168,85,247,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.05) 1px,transparent 1px);
+    background-size:44px 44px;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{width:min(1100px,100% - 40px);margin-inline:auto;position:relative;z-index:1}
+  header{padding:22px 0}
+  .nav{display:flex;align-items:center;gap:14px}
+  .logo{display:inline-flex;align-items:center;gap:10px}
+  .logo .mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));box-shadow:0 6px 18px rgba(168,85,247,.32)}
+  .logo .mark svg{width:14px;height:14px;fill:#1a1204;margin-left:1px}
+  .logo .txt{font-size:15.5px;font-weight:900;letter-spacing:-.03em;font-family:'Audiowide',sans-serif}
+  .back{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px 0 10px;border-radius:9px;border:1px solid var(--line);margin-left:auto;font-size:12px;font-weight:700;color:#a9aeba;transition:background .18s,color .18s,border-color .18s}
+  .back:hover{background:rgba(255,255,255,.07);color:#fff;border-color:var(--gold)}
+  .back svg{width:13px;height:13px}
+  main{flex:1;padding:24px 0 60px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:9.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-hi);margin-bottom:14px}
+  .eyebrow::before{content:'';width:18px;height:1.5px;border-radius:2px;background:var(--gold)}
+  h1{font-size:clamp(28px,4.2vw,40px);font-weight:900;letter-spacing:-.045em;line-height:1.02;margin-bottom:8px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:22px 0}
+  .stat{padding:16px 18px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+  .stat strong{display:block;font-size:26px;font-weight:900;letter-spacing:-.03em;background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat span{display:block;margin-top:4px;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dimmer)}
+  table{width:100%;border-collapse:collapse;margin-top:18px;font-size:12px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  th{font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--dimmer)}
+  td{color:#dfe3ea}
+  .badge{display:inline-flex;align-items:center;gap:4px;height:18px;padding:0 7px;border-radius:4px;font-size:8.5px;font-weight:900;letter-spacing:.1em}
+  .badge.owner{color:#1a1204;background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep))}
+  .badge.sup{color:#a8f0c9;border:1px solid rgba(61,220,132,.35);background:rgba(61,220,132,.1)}
+  .msg{display:none;margin-top:14px;padding:11px 13px;border-radius:10px;font-size:11.5px;font-weight:600}
+  .msg.show{display:block}
+  .msg.err{border:1px solid rgba(255,90,90,.35);background:rgba(255,90,90,.1);color:#ffb0b0}
+  footer{padding:0 0 26px;font-size:10.5px;line-height:1.8;color:#3f444f;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="nav">
+      <a class="logo" href="index.html">
+        <span class="mark"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+        <span class="txt"><b>NOIR</b><span>dublado em português</span></span>
+      </a>
+      <a class="back" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m15 18-6-6 6-6"/></svg>
+        Voltar
+      </a>
+    </div>
+  </header>
+  <main>
+    <span class="eyebrow">Painel do dono</span>
+    <h1>Controle do site NOIR</h1>
+    <p>Acesso restrito a nexuusz e nakaw. Aqui vocêê vê usuários, apoiadores e o tamanho do catálogo.</p>
+    <div class="stats" id="stats"></div>
+    <h2 style="font-size:16px;font-weight:800;margin-top:22px">Usuários</h2>
+    <table>
+      <thead><tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Papel</th><th>Apoiador</th><th>Desde</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="msg" id="msg"></div>
+  </main>
+</div>
+<footer>NOIR — criado por nexuusz e nakaw.</footer>
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  (async () => {
+    try {
+      const r = await fetch('/api/owner', { cache: 'no-store' });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || 'acesso negado');
+      const s = d.stats;
+      $('stats').innerHTML = [
+        ['Usuários', s.usuarios], ['Apoiadores', s.apoiadores], ['Donos', s.donos],
+        ['Progresso', s.progresso], ['Títítulos', s.títítulos], ['Sessões', s.sessoes],
+      ].map(([k,v]) => `<div class="stat"><strong>${v}</strong><span>${k}</span></div>`).join('');
+      $('tbody').innerHTML = d.usuarios.map((u) => `
+        <tr>
+          <td>${u.id}</td><td>${u.name}</td><td>${u.email}</td>
+          <td>${u.role === 'owner' ? '<span class="badge owner">DONO</span>' : 'user'}</td>
+          <td>${u.supporter ? '<span class="badge sup">APOIADOR</span>' : '—'}</td>
+          <td>${new Date(u.since).toLocaleDateString('pt-BR')}</td>
+        </tr>`).join('');
+    } catch (e) {
+      const m = $('msg'); m.textContent = e.message; m.className = 'msg show err';
+    }
+  })();
+})();
+</script>
+</body>
+</html>

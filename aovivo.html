@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ao vivo — NOIR</title>
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#07080b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Audiowide&display=swap" rel="stylesheet">
+<style>
+  [hidden]{display:none!important}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --bg:#07080b;
+    --gold:#a855f7;
+    --gold-hi:#c084fc;
+    --gold-deep:#7c3aed;
+    --text:#f4f5f8;
+    --dim:#9aa0ae;
+    --dimmer:#666c7a;
+    --live:#ff4d4d;
+    --line:rgba(255,255,255,.07);
+    --line-2:rgba(255,255,255,.14);
+    --ease:cubic-bezier(.22,.9,.24,1);
+    --header:68px;
+  }
+
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+    font-feature-settings:"ss01","cv11";
+    background-image:
+      linear-gradient(rgba(168,85,247,.05) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(168,85,247,.05) 1px,transparent 1px);
+    background-size:44px 44px;
+    background-attachment:fixed;
+  }
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  svg{display:block;flex:none}
+  img{display:block;max-width:100%}
+  .wrap{width:min(1240px,100% - 48px);margin-inline:auto}
+
+  /* ───────── topo ───────── */
+  header{
+    position:fixed;inset:0 0 auto 0;z-index:90;
+    background:rgba(7,8,11,.86);
+    backdrop-filter:blur(22px) saturate(170%);
+    -webkit-backdrop-filter:blur(22px) saturate(170%);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;gap:14px;height:var(--header)}
+
+  .logo{display:inline-flex;align-items:center;gap:10px;flex:none}
+  .logo .mark{
+    width:33px;height:33px;border-radius:10px;display:grid;place-items:center;
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    box-shadow:0 6px 18px rgba(245,184,61,.3),inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .logo .mark svg{width:13px;height:13px;fill:#1a1204;margin-left:1px}
+  .logo .txt{font-size:15.5px;font-weight:900;letter-spacing:-.03em;font-family:'Audiowide',sans-serif}
+  .logo .txt b{color:var(--gold)}
+
+  .back{
+    display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px 0 10px;
+    border-radius:9px;border:1px solid var(--line);
+    font-size:12px;font-weight:700;color:#a9aeba;
+    transition:background .18s,color .18s,border-color .18s;
+  }
+  .back:hover{background:rgba(255,255,255,.07);color:#fff;border-color:rgba(245,184,61,.4)}
+  .back svg{width:13px;height:13px}
+
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .nav-right a{
+    display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px;
+    border-radius:9px;border:1px solid var(--line);
+    font-size:12px;font-weight:700;color:#a9aeba;
+    transition:background .18s,color .18s,border-color .18s;
+  }
+  .nav-right a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav-right a.gold{
+    border-color:transparent;color:#1a1204;
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    box-shadow:0 6px 18px rgba(245,184,61,.26),inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .nav-right a.gold:hover{filter:brightness(1.07);color:#1a1204}
+  .nav-right svg{width:13px;height:13px}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:44px;padding:0 18px;border-radius:10px;
+    font-size:12.5px;font-weight:700;white-space:nowrap;
+    border:1px solid var(--line-2);background:rgba(255,255,255,.055);
+    transition:background .18s,border-color .18s,filter .18s,transform .14s var(--ease);
+  }
+  .btn:hover{background:rgba(255,255,255,.11)}
+  .btn:active{transform:scale(.975)}
+  .btn svg{width:14px;height:14px}
+  .btn-gold{
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    border-color:transparent;color:#1a1204;
+    box-shadow:0 10px 26px rgba(245,184,61,.28),inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .btn-gold:hover{background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));filter:brightness(1.08)}
+  .btn-lg{height:50px;padding:0 22px;font-size:13.5px;border-radius:11px}
+  .btn-ghost{background:rgba(10,12,17,.5);border-color:rgba(255,255,255,.18)}
+  .btn-ghost:hover{background:rgba(255,255,255,.14)}
+
+  /* ───────── capa ───────── */
+  .hero{position:relative;padding:calc(var(--header) + 64px) 0 8px;overflow:hidden}
+  .hero::before{
+    content:'';position:absolute;inset:-20% -10% auto -10%;height:520px;pointer-events:none;
+    background:
+      radial-gradient(48% 62% at 24% 30%,rgba(255,61,61,.14),transparent 68%),
+      radial-gradient(46% 58% at 78% 12%,rgba(245,184,61,.12),transparent 70%);
+  }
+  .hero-inner{position:relative;z-index:2;max-width:760px}
+  .tag{
+    display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 11px;border-radius:6px;
+    font-size:9.5px;font-weight:900;letter-spacing:.18em;color:#ffd7d7;
+    border:1px solid rgba(255,61,61,.45);background:rgba(255,61,61,.14);
+  }
+  .tag .dot{width:6px;height:6px;border-radius:50%;background:var(--live);box-shadow:0 0 9px rgba(255,77,77,.95);animation:beat 1.4s infinite}
+  @keyframes beat{50%{opacity:.35;transform:scale(.85)}}
+
+  .hero h1{
+    margin-top:18px;font-size:clamp(34px,5.4vw,62px);font-weight:900;
+    letter-spacing:-.045em;line-height:.98;
+  }
+  .hero h1 b{
+    background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p{margin-top:18px;max-width:56ch;font-size:13.5px;line-height:1.8;color:#9aa0ae}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+
+  .strip{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+    max-width:640px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line);
+  }
+  .strip div{padding-left:20px;border-left:1px solid var(--line)}
+  .strip div:first-child{padding-left:0;border-left:none}
+  .strip span{display:block;font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--dimmer)}
+  .strip strong{display:block;margin-top:5px;font-size:14px;font-weight:800;letter-spacing:-.01em}
+
+  /* ───────── seções ───────── */
+  section{padding-top:52px}
+  .head{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+  .head .titles{display:flex;flex-direction:column;gap:7px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:9.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--gold-hi);line-height:1;
+  }
+  .eyebrow::before{content:'';width:18px;height:1.5px;border-radius:2px;background:var(--gold)}
+  .head h2{font-size:19px;font-weight:800;letter-spacing:-.028em;line-height:1.1}
+  .head .spacer{margin-left:auto}
+
+  .days{display:flex;gap:4px;padding:3px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.035);margin-left:auto}
+  .days button{
+    height:30px;padding:0 14px;border-radius:8px;
+    font-size:11.5px;font-weight:700;color:#aeb4c1;
+    transition:background .16s,color .16s,box-shadow .16s;
+  }
+  .days button:hover{color:#fff}
+  .days button[aria-pressed="true"]{
+    color:#1a1204;background:linear-gradient(150deg,var(--gold-hi),var(--gold-deep));
+    box-shadow:0 5px 14px rgba(245,184,61,.25);
+  }
+
+  .matches{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:14px}
+
+  .match{
+    position:relative;padding:16px 16px 14px;border-radius:13px;
+    border:1px solid var(--line);background:linear-gradient(160deg,#0d0f15,#090a0e);
+    transition:border-color .2s,transform .2s var(--ease),box-shadow .2s;
+    overflow:hidden;
+  }
+  .match:hover{border-color:rgba(245,184,61,.4);transform:translateY(-3px);box-shadow:0 18px 36px rgba(0,0,0,.55)}
+  .match::after{
+    content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background:radial-gradient(70% 90% at 100% 0%,rgba(255,61,61,.1),transparent 62%);
+  }
+
+  .match .top{display:flex;align-items:center;gap:8px;position:relative;z-index:1}
+  .match .liga{
+    height:20px;padding:0 7px;display:inline-flex;align-items:center;border-radius:4px;
+    font-size:8px;font-weight:900;letter-spacing:.12em;color:#ffd88f;
+    border:1px solid rgba(245,184,61,.34);background:rgba(245,184,61,.1);
+  }
+  .match .hora{
+    margin-left:auto;display:inline-flex;align-items:center;gap:5px;
+    font-size:10.5px;font-weight:800;color:#8b919e;letter-spacing:.02em;
+  }
+  .match .hora svg{width:11px;height:11px;opacity:.6}
+
+  .match .board{
+    position:relative;z-index:1;
+    display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+    align-items:center;gap:10px;margin-top:16px;
+  }
+  .team{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;min-width:0}
+  .team i{
+    width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-style:normal;
+    font-size:11.5px;font-weight:900;letter-spacing:-.02em;color:#c3c8d3;
+    border:1px solid var(--line-2);background:rgba(255,255,255,.055);
+  }
+  .team span{
+    font-size:11.5px;font-weight:700;line-height:1.3;color:#dfe3ea;
+    max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .team em{font-style:normal;font-size:9px;font-weight:800;letter-spacing:.12em;color:#5b6170}
+
+  .x{font-size:10px;font-weight:900;color:#4b515e;letter-spacing:.1em}
+
+  .match .foot{
+    position:relative;z-index:1;
+    display:flex;align-items:center;gap:8px;margin-top:15px;padding-top:12px;
+    border-top:1px solid var(--line);
+  }
+  .match .foot .canal{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:10.5px;font-weight:700;color:#7d838f;
+  }
+  .match .foot .canal svg{width:11px;height:11px}
+  .match .foot .soon{
+    margin-left:auto;display:inline-flex;align-items:center;gap:5px;
+    height:22px;padding:0 8px;border-radius:5px;
+    font-size:8px;font-weight:900;letter-spacing:.14em;color:#ffd7d7;
+    border:1px solid rgba(255,61,61,.4);background:rgba(255,61,61,.12);
+  }
+
+  /* ───────── canais ───────── */
+  .channels{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+  .channel{
+    display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:11px;
+    min-height:62px;padding:11px 13px;border-radius:12px;
+    border:1px solid var(--line);background:rgba(255,255,255,.028);
+  }
+  .channel i{
+    width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-style:normal;
+    font-size:10px;font-weight:900;color:#c3c8d3;background:rgba(255,255,255,.07);
+  }
+  .channel .txt strong{display:block;font-size:12px;font-weight:700}
+  .channel .txt span{display:block;margin-top:3px;font-size:10px;font-weight:600;color:var(--dimmer)}
+  .channel .soon{
+    font-size:8px;font-weight:900;letter-spacing:.12em;color:#5b6170;
+    border:1px solid var(--line-2);border-radius:4px;padding:3px 5px;
+  }
+
+  /* ───────── recursos ───────── */
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--line)}
+  .feature{padding:20px 18px;background:#0a0c11}
+  .feature .ic{
+    width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+    border:1px solid rgba(245,184,61,.3);background:rgba(245,184,61,.1);color:var(--gold-hi);
+  }
+  .feature .ic svg{width:14px;height:14px}
+  .feature strong{display:block;margin-top:13px;font-size:13px;font-weight:800}
+  .feature p{margin-top:6px;font-size:11.5px;line-height:1.7;color:#6f7583}
+
+  /* ───────── aviso ───────── */
+  .notice{
+    display:flex;align-items:flex-start;gap:11px;margin-top:26px;padding:15px 17px;border-radius:12px;
+    border:1px solid rgba(245,184,61,.22);background:rgba(245,184,61,.055);
+    font-size:11.5px;line-height:1.75;color:#a8adba;
+  }
+  .notice svg{width:15px;height:15px;margin-top:2px;color:var(--gold);flex:none}
+  .notice b{color:#ffd88f;font-weight:800}
+
+  footer{
+    margin-top:68px;border-top:1px solid var(--line);background:#05060a;
+    padding:30px 0 28px;font-size:10.5px;line-height:1.8;color:#4e5462;
+  }
+
+  @media (max-width:900px){
+    .strip{display:none}
+  }
+  @media (max-width:680px){
+    :root{--header:60px}
+    .wrap{width:calc(100% - 28px)}
+    .logo .txt{display:none}
+    .nav-right a span{display:none}
+    .days{margin-left:0;width:100%}
+    .days button{flex:1}
+    .hero{padding-top:calc(var(--header) + 40px)}
+    .matches{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="index.html">
+      <span class="mark"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="txt">NOIR</span>
+    </a>
+    <a class="back" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m15 18-6-6 6-6"/></svg>
+      Catálogo
+    </a>
+    <div class="nav-right">
+      <a href="login.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        <span>Entrar</span>
+      </a>
+      <a class="gold" href="index.html#filmes">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <span>Ver catálogo</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap hero-inner">
+    <span class="tag"><span class="dot"></span> AO VIVO · EM BREVE</span>
+    <h1>Futebol ao vivo,<br>narrado em <b>português</b>.</h1>
+    <p>Brasileirão, Copa do Brasil, Libertadores e Champions na mesma aba do catálogo — com narração brasileira, placar em tempo real e chat da torcida. Estamos fechando as fontes: esta aba abre na próxima atualização do player.</p>
+    <div class="hero-actions">
+      <a class="btn btn-gold btn-lg" href="index.html#filmes">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Assistir um filme agora
+      </a>
+      <button class="btn btn-ghost btn-lg" id="avisar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        Avise-me quando abrir
+      </button>
+    </div>
+    <div class="strip">
+      <div><span>Jogos por rodada</span><strong>~40</strong></div>
+      <div><span>Narração</span><strong>PT-BR</strong></div>
+      <div><span>Qualidade</span><strong>HD 720p+</strong></div>
+      <div><span>Status</span><strong>Em breve</strong></div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="head">
+      <div class="titles">
+        <span class="eyebrow">Agenda</span>
+        <h2>Jogos da semana <span style="font-size:11.5px;font-weight:700;color:#666c7a;vertical-align:2px;margin-left:8px">prévia</span></h2>
+      </div>
+      <div class="days" id="days">
+        <button data-dia="hoje" aria-pressed="true">Hoje</button>
+        <button data-dia="amanha" aria-pressed="false">Amanhã</button>
+        <button data-dia="semana" aria-pressed="false">Semana</button>
+      </div>
+    </div>
+    <div class="matches" id="matches"></div>
+    <div class="notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+      <p><b>Prévia, não transmissão.</b> Horários e confrontos mudam com a tabela oficial. Quando a aba abrir, cada jogo ganha o mesmo seletor de servidores que os filmes têm hoje — se uma fonte cair, vocêê troca sem sair da tela.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head">
+      <div class="titles">
+        <span class="eyebrow">Canais</span>
+        <h2>Canais esportivos na lista</h2>
+      </div>
+    </div>
+    <div class="channels">
+      <div class="channel"><i>SPT</i><span class="txt"><strong>SporTV</strong><span>Brasileirão · Libertadores</span></span><span class="soon">EM BREVE</span></div>
+      <div class="channel"><i>PRE</i><span class="txt"><strong>Premiere</strong><span>Pay-per-view do Brasileirão</span></span><span class="soon">EM BREVE</span></div>
+      <div class="channel"><i>ESB</i><span class="txt"><strong>ESPN Brasil</strong><span>Champions · Premier League</span></span><span class="soon">EM BREVE</span></div>
+      <div class="channel"><i>TNT</i><span class="txt"><strong>TNT Sports</strong><span>Libertadores · Copa do Brasil</span></span><span class="soon">EM BREVE</span></div>
+      <div class="channel"><i>GLO</i><span class="txt"><strong>Globo</strong><span>Rodada aberta do Brasileirão</span></span><span class="soon">EM BREVE</span></div>
+      <div class="channel"><i>REC</i><span class="txt"><strong>Record</strong><span>Paulistão · Carioca</span></span><span class="soon">EM BREVE</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head">
+      <div class="titles">
+        <span class="eyebrow">Como vai funcionar</span>
+        <h2>O que vem junto com a aba</h2>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9.5 5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg></span>
+        <strong>Um jogador por jogo</strong>
+        <p>Mesmo esquema de servidores do catálogo: se a fonte cair no meio do segundo tempo, vocêê troca de espelho sem perder o placar.</p>
+      </div>
+      <div class="feature">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V9M10 20V4M16 20v-7M22 20v-3"/></svg></span>
+        <strong>Placar ao vivo</strong>
+        <p>Placar, minuto e escalação puxados de feed público, atualizando a cada lance — sem precisar sair para outro site.</p>
+      </div>
+      <div class="feature">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg></span>
+        <strong>Chat da torcida</strong>
+        <p>Uma sala por partida, com conta do site. Sem cadastro à parte e sem app para instalar no celular.</p>
+      </div>
+      <div class="feature">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+        <strong>Lembrete de jogo</strong>
+        <p>Marca o time e a conta guarda a agenda. Quando faltar 10 minutos, o site avisa na aba Ao vivo e na home.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    NOIR não hospeda arquivos nem transmite canais. Agenda exibida apenas como prévia do que está sendo preparado.
+    Marcas e escudos pertencem aos seus respectivos clubes e detentores de direitos.
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+
+  const JOGOS = {
+    hoje: [
+      { liga: 'BRASILEIRÃO', hora: '16:00', a: ['COR', 'Corinthians'], b: ['INT', 'Internacional'], canal: 'Premiere' },
+      { liga: 'BRASILEIRÃO', hora: '18:30', a: ['FLA', 'Flamengo'], b: ['PAL', 'Palmeiras'], canal: 'SporTV' },
+      { liga: 'BRASILEIRÃO', hora: '21:00', a: ['SAO', 'São Paulo'], b: ['GRE', 'Grêmio'], canal: 'Premiere' },
+      { liga: 'LIBERTADORES', hora: '21:30', a: ['BOT', 'Botafogo'], b: ['RIV', 'River Plate'], canal: 'ESPN Brasil' },
+    ],
+    amanha: [
+      { liga: 'BRASILEIRÃO', hora: '16:00', a: ['VAS', 'Vasco'], b: ['FLU', 'Fluminense'], canal: 'SporTV' },
+      { liga: 'BRASILEIRÃO', hora: '18:30', a: ['CRU', 'Cruzeiro'], b: ['CAM', 'Atlético-MG'], canal: 'Premiere' },
+      { liga: 'CHAMPIONS', hora: '16:00', a: ['RMA', 'Real Madrid'], b: ['MCI', 'Man. City'], canal: 'TNT Sports' },
+      { liga: 'CHAMPIONS', hora: '18:00', a: ['BAR', 'Barcelona'], b: ['BAY', 'Bayern'], canal: 'ESPN Brasil' },
+    ],
+    semana: [
+      { liga: 'COPA DO BRASIL', hora: 'QUA 19:30', a: ['PAL', 'Palmeiras'], b: ['FLA', 'Flamengo'], canal: 'Globo' },
+      { liga: 'LIBERTADORES', hora: 'QUI 21:30', a: ['FLA', 'Flamengo'], b: ['BOC', 'Boca Juniors'], canal: 'SporTV' },
+      { liga: 'BRASILEIRÃO', hora: 'SÁB 16:00', a: ['INT', 'Internacional'], b: ['GRE', 'Grêmio'], canal: 'Premiere' },
+      { liga: 'PREMIER LEAGUE', hora: 'DOM 12:30', a: ['ARS', 'Arsenal'], b: ['LIV', 'Liverpool'], canal: 'ESPN Brasil' },
+      { liga: 'BRASILEIRÃO', hora: 'DOM 18:30', a: ['COR', 'Corinthians'], b: ['SAN', 'Santos'], canal: 'SporTV' },
+      { liga: 'LA LIGA', hora: 'DOM 21:00', a: ['RMA', 'Real Madrid'], b: ['ATL', 'Atlético'], canal: 'ESPN Brasil' },
+    ],
+  };
+
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function card(j) {
+    const el = document.createElement('article');
+    el.className = 'match';
+    el.innerHTML = `
+      <div class="top">
+        <span class="liga">${esc(j.liga)}</span>
+        <span class="hora">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+          ${esc(j.hora)}
+        </span>
+      </div>
+      <div class="board">
+        <span class="team"><i>${esc(j.a[0])}</i><span>${esc(j.a[1])}</span><em>CASA</em></span>
+        <span class="x">×</span>
+        <span class="team"><i>${esc(j.b[0])}</i><span>${esc(j.b[1])}</span><em>FORA</em></span>
+      </div>
+      <div class="foot">
+        <span class="canal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9.5 5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>
+          ${esc(j.canal)}
+        </span>
+        <span class="soon">EM BREVE</span>
+      </div>`;
+    return el;
+  }
+
+  function pintar(dia) {
+    const caixa = $('matches');
+    caixa.innerHTML = '';
+    (JOGOS[dia] || []).forEach((j) => caixa.appendChild(card(j)));
+    document.querySelectorAll('#days button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.dia === dia)));
+  }
+
+  document.querySelectorAll('#days button').forEach((b) => {
+    b.addEventListener('click', () => pintar(b.dataset.dia));
+  });
+
+  $('avisar').addEventListener('click', async () => {
+    const b = $('avisar');
+    const rotulo = b.innerHTML;
+    b.innerHTML = 'Aviso anotado — a aba abre na próxima atualização';
+    b.disabled = true;
+    setTimeout(() => { b.innerHTML = rotulo; b.disabled = false; }, 3200);
+  });
+
+  pintar('hoje');
+})();
+</script>
+</body>
+</html>

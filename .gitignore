@@ -1,0 +1,11 @@
+node_modules/
+data/store.json
+data/store.json.tmp
+*.tmp
+expand_progress.json
+expand2_progress.json
+expand3_progress.json
+collected_ids.json
+translate_progress.json
+.DS_Store
+Thumbs.db
