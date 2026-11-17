@@ -837,6 +837,11 @@
 
   /* ───────── tela cheia ───────── */
   $('fs').addEventListener('click', () => {
+    // no app NOIR, usa o modo imersivo do Android
+    if (window.NoirApp && window.NoirApp.toggleFullscreen) {
+      window.NoirApp.toggleFullscreen();
+      return;
+    }
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     else $('frame').requestFullscreen().catch(() => {});
   });
