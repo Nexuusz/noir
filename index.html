@@ -33,11 +33,11 @@
     --header:72px;
   }
 
-  html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header) + 16px)}
+  html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header) + 16px);overflow-x:hidden;max-width:100%}
   body{
     background:var(--bg);color:var(--text);
     font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
-    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;max-width:100%;
     font-feature-settings:"ss01","cv11";
     background-image:
       linear-gradient(rgba(168,85,247,.05) 1px,transparent 1px),
@@ -272,7 +272,7 @@
   .arrows button:hover{background:rgba(245,184,61,.14);border-color:rgba(245,184,61,.45);color:var(--gold-hi)}
   .arrows svg{width:13px;height:13px}
 
-  .rail-wrap{position:relative}
+  .rail-wrap{position:relative;max-width:100%;overflow:hidden}
   .rail{
     display:flex;gap:16px;overflow-x:auto;padding:4px 2px 14px;
     scroll-snap-type:x proximity;scroll-behavior:smooth;scrollbar-width:none;
@@ -1882,7 +1882,7 @@
       setInterval(() => {
         destaqueIdx = (destaqueIdx + 1) % destaques.length;
         montarDestaque(destaques[destaqueIdx], true);
-      }, 8000);
+      }, 15000);
     } else {
       montarDestaque(CATALOGO[0]);
     }
