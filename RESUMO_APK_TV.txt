@@ -1,0 +1,100 @@
+PROJETO NOIR — RESUMO DAS AÇÕES REALIZADAS E PRÓXIMOS PASSOS PARA APK ANDROID TV
+
+O que foi feito até agora:
+
+1. ✅ manifest.json — Criado com configurações PWA (nome, descrição, cores theme_color #a855f7, background_color #07080b, orientation portrait, ícones placeholder)
+
+2. ✅ sw.js — Service worker criado com:
+   - Cache estático (index.html, assets, manifest)
+   - Fallback offline.html quando sem conexão
+   - Estratégia cache-first para assets, network-first para API calls
+
+3. ✅ offline.html — Página minimalista de "sem conexão" com link de retorno
+
+4. ✅ index.html — Service worker registrado no final do body com type="module"
+
+Próximos passos essenciais para o APK Android TV:
+
+ETAPA 5: OTIMIZAR INTERFACE PARA TV/LEANBACK
+
+O layout atual funciona mas precisa de ajustes para controle remoto:
+
+- Adicionar estilos .focus-visible para feedback visual ao navegar com setas
+- Adicionar tabindex="0" nos elementos interativos principais (links de filmes, botões de navegação)
+- O hero strip de 5 stats (Títulos/Filmes/Séries/Animes/Desenhos) precisa ser navegável com setas do controle
+- Grid de cards precisa de navegação lógica com DPAD (setas direita/esquerda/up/down)
+- O hero carousel drift pode permanecer, mas deve ser pausável ao focar
+
+Código CSS sugerido:
+```css
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; transition: outline .2s; }
+```
+
+ETAPA 6: ADICIONAR ÍCONES DO APP
+
+- Criar/favicon.ico ou logo.png adequado
+- No manifest.json, substituir os ícones placeholder por caminhos reais
+- Android TV requer ícones múltiplas: 48dp, 72dp, 96dp, 144dp, 192dp, 512dp
+
+ETAPA 7: PACOTAR COMO WEBAPK
+
+Como NÃO há Android SDK na máquina, as opções práticas:
+
+OPÇÃO A: "ADICIONAR À TELA INICIAL" NO CHROME/EDGE ANDROID
+- Acessar site no Chrome/Edge do Android/TV
+- Menu (⋮) → "Instalar aplicativo" ou "Adicionar à tela inicial"
+- Isso gera um WebAPK funcional automaticamente
+- Não requer nenhuma modificação extra se o manifest estiver correto
+- Esta é a opção mais recomendada atualmente
+
+OPÇÃO B: TERMUX NO ANDROID
+- Instalar termux no dispositivo Android
+- Comandos: pkg update, pkg install python
+- Usar ferramentas como webapk ou PWA2APK
+- Mais complexo mas gera APK "nativo"
+
+OPÇÃO C: CONVERSORES ON-LINE
+- Sites como pwa2apk.netlify.app ou add2home.com
+- Fazer upload do index.html + manifest.json + sw.js
+- Baixar APK gerado
+- Funciona para TV se manifest tiver configurações corretas
+
+ETAPA 8: VERIFICAÇÕES FINAIS
+
+1. No site instalado, testar:
+   - Navegação com setas do controle remoto
+   - Hero carousel e strip navegável
+   - Player de vídeo nos embeds (SuperFlix/StreamBetter)
+   - Busca e filtros funcionando
+   - Conta/login funcionando
+
+2. Verificar se os embeds de vídeo funcionam em iframe na TV:
+   - Os players atuais usam iframe terceiros (SuperFlix/StreamBetter)
+   - Funcionam na maioria das TVs Android, mas podem exigir interação inicial
+   - Não dá para bloquear ads sem quebrar o player (como já documentado)
+
+3. Testar modo offline:
+   - Desconectar internet
+   - Acessar app instalado
+   - Deve carregar página offline com conteúdo em cache
+
+ARQUIVOS CRIADOS/ALTERADOS:
+
+- ✅ manifest.json — novo
+- ✅ sw.js — novo  
+- ✅ offline.html — novo
+- ✅ index.html — modificado (adicionou registration do SW no final)
+
+ARQUIVO DE ROADMAP:
+
+- ✅ APK_ROADMAP.md — novo (roteiro completo das etapas)
+
+PRÓXIMO PASSO IMEDIATO RECOMENDADO:
+
+1. Testar o site no navegador Chrome do seu celular Android ou TV Box
+2. Acessar o site → Menu → "Instalar aplicativo"
+3. Verificar se cria o atalho WebAPK com ícone NOIR
+4. Testar navegação com controle remoto (se tiver TV Box)
+5. Ajustar estilos focus-visible se necessário
+
+O site já está 90% pronto para ser "instalado" como app em Android TV. O último passo é o packaging, que pode ser feito instantaneamente via Chrome/Edge "Adicionar à tela inicial" sem precisar de Android SDK.

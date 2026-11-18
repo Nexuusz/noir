@@ -725,10 +725,28 @@
     if (drawer.classList.contains('open')) paint_list();
 
     prazo = setTimeout(() => {
+      // tenta o próximo servidor automaticamente antes de desistir
+      tentarProximo(s.key);
+    }, 15000);
+  }
+
+  // troca automática de fonte quando um servidor falha / não carrega
+  let tentativas = 0;
+  function tentarProximo(chaveAtual) {
+    if (tentativas >= lista.length - 1) {
+      // todas falharam — mostra erro
+      const s = porChave(chaveAtual);
       $('spinbox').style.display = 'none';
-      $('load-msg').textContent = `${s.nome} está demorando…`;
+      $('load-msg').textContent = `${s.nome} não respondeu`;
+      $('load-sub').textContent = 'Nenhum servidor brasileiro respondeu neste aparelho. Tente outro navegador, outro servidor ou verifique sua conexão/DNS.';
       err.classList.add('show');
-    }, 18000);
+      return;
+    }
+    tentativas++;
+    const i = lista.findIndex((x) => x.key === chaveAtual);
+    const prox = lista[(i + 1) % lista.length];
+    $('load-msg').textContent = `${porChave(chaveAtual).nome} falhou — tentando ${prox.nome}…`;
+    load_server(prox.key, { silent: true });
   }
 
   iframe.addEventListener('load', () => {
@@ -748,7 +766,7 @@
       b.title = `${s.nome} — ${s.nota}`;
       const st = status.get(s.key);
       b.innerHTML = `<span class="dot ${st === 'ok' ? 'ok' : st === 'bad' ? 'bad' : st === 'wait' ? 'wait' : ''}"></span>${s.nome}`;
-      b.addEventListener('click', () => load_server(s.key));
+      b.addEventListener('click', () => { tentativas = 0; load_server(s.key); });
       caixa.appendChild(b);
     });
   }
@@ -797,7 +815,7 @@
         </span>
       </span>
       <span class="st ${st === 'ok' ? 'ok' : st === 'bad' ? 'bad' : st === 'wait' ? 'wait' : ''}"></span>`;
-    b.addEventListener('click', () => { load_server(s.key); fechar_gaveta(); });
+    b.addEventListener('click', () => { tentativas = 0; load_server(s.key); fechar_gaveta(); });
     return b;
   }
 

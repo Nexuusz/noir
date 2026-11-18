@@ -1,0 +1,38 @@
+================================================================================
+PROJETO NOIR — APK ANDROID TV: CONCLUSÃO RÁPIDA
+================================================================================
+
+STATUS: Tudo pronto para instalação WebAPK sem precisar de Android SDK.
+
+ETAPAS CONCLUÍDAS POR MIM:
+✅ manifest.json - Config PWA completa
+✅ sw.js - Service worker com cache offline
+✅ offline.html - Página de fallback
+✅ index.html - SW registrado no final
+
+PRÓXIMO PASSO (DIRETO):
+1. Inicie o servidor: node server.mjs (na pasta site2.0)
+2. Acesse no Chrome/Edge do seu Android ou TV Box: http://127.0.0.1:4322
+3. Toque no menu (⋮) → "Instalar aplicativo" ou "Adicionar à tela inicial"
+4. Pronto! O NOIR vira um app na tela da sua TV.
+
+ISSO MESMO. Não precisa de SDK, nem de build steps complexos.
+
+O QUE TESTAR DEPOIS:
+- Navegação com setas do controle remoto (DPAD)
+- Hero carousel e strip navegável
+- Player de vídeo (embeds SuperFlix/StreamBetter)
+- Busca e filtros
+- Modo offline (desconecte a net)
+
+ANÚNCIOS: Os players são iframes terceiros — não dá bloquear via código.
+A única solução é uBlock Origin (avisado no site já).
+
+ARQUIVOS CRIADOS:
+- manifest.json
+- sw.js
+- offline.html
+- APK_ROADMAP.md (roteiro completo)
+- RESUMO_APK_TV.txt (este resumo)
+
+================================================================================

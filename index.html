@@ -753,6 +753,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg>
             Apoiar no Discord
           </a>
+          <a href="app.html" id="acc-app">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>
+            Baixar App
+          </a>
           <a href="dono.html" id="acc-dono" hidden>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6z"/></svg>
             Painel do dono
@@ -1052,6 +1056,7 @@
         <h4>Sua conta</h4>
         <a href="login.html">Entrar</a>
         <a href="login.html?modo=criar">Criar conta</a>
+        <a href="app.html">Baixar App</a>
         <a href="aovivo.html">Ao vivo</a>
         <a href="player.html">Como assistir</a>
       </div>
@@ -1892,6 +1897,13 @@
 
   iniciar();
 })();
+</script>
+<script type="module">
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then((reg) => console.log('SW registrado:', reg.scope))
+      .catch((err) => console.error('Erro ao registrar SW:', err));
+  }
 </script>
 </body>
 </html>

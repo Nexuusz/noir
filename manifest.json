@@ -1,0 +1,22 @@
+{
+  "name": "NOIR - Filmes e Séries Dublados",
+  "short_name": "NOIR",
+  "description": "Catálogo de filmes, séries, animes e desenhos dublados em português",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#07080b",
+  "theme_color": "#a855f7",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
