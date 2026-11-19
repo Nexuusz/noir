@@ -322,6 +322,7 @@ async function ler_catalogo() {
 
 /* ───────── IPTV: parse M3U em runtime ───────── */
 let iptv_cache = null;
+let iptv_inflight = null;
 let iptv_cache_em = 0;
 const IPTV_CACHE_TTL = 30 * 60 * 1000; // 30 min
 
@@ -344,79 +345,106 @@ const IPTV_EXCLUDE_GROUPS = new Set([
   'RÁDIOS DIVERSAS',
 ]);
 
-async function fetch_iptv_m3u() {
+async function fetch_iptv_response() {
   if (!IPTV_ENABLED) return null;
   const url = `${IPTV_BASE}/get.php?username=${encodeURIComponent(IPTV_USER)}&password=${encodeURIComponent(IPTV_PASS)}&type=m3u_plus`;
   try {
-    const r = await fetch(url, { headers: { 'user-agent': 'NOIR/2.0' } });
-    if (!r.ok) return null;
-    return await r.text();
+    const r = await fetch(url, {
+      headers: { 'user-agent': 'NOIR/2.0', 'accept-encoding': 'gzip, deflate' },
+      signal: AbortSignal.timeout(180_000),
+    });
+    if (!r.ok) {
+      console.error('IPTV fetch:', r.status, r.statusText);
+      return null;
+    }
+    return r;
   } catch (e) {
     console.error('IPTV fetch:', e.message);
     return null;
   }
 }
 
-function parse_iptv_m3u(texto) {
+// parse em streaming: a playlist tem ~34 MB / 840k linhas — nunca materializar tudo
+async function parse_iptv_stream(body) {
+  const decoder = new TextDecoder('utf-8');
   const channels = [];
   const seen = new Set();
   let current = null;
-  for (const raw of texto.split(/\r?\n/)) {
-    const line = raw.trim();
+  let buf = '';
+
+  const consume = (line) => {
+    if (!line) return;
     if (line.startsWith('#EXTINF')) {
       const nameM = line.match(/tvg-name="([^"]*)"/);
       const logoM = line.match(/tvg-logo="([^"]*)"/);
       const groupM = line.match(/group-title="([^"]*)"/);
+      const depoisVirgula = line.slice(line.lastIndexOf(',') + 1).trim();
       current = {
-        name: nameM ? nameM[1] : '',
+        name: (nameM && nameM[1]) || depoisVirgula,
         logo: logoM ? logoM[1] : '',
         group: groupM ? groupM[1] : '',
       };
-    } else if (line && !line.startsWith('#') && current) {
-      // extract channel id from URL path
-      const urlM = line.match(/\/(\d+)\.ts$/);
-      const channelId = urlM ? urlM[1] : null;
-      const group = current.group;
-      if (!IPTV_EXCLUDE_GROUPS.has(group) && IPTV_LIVE_GROUPS.has(group)) {
-        if (!seen.has(current.name)) {
-          seen.add(current.name);
-          channels.push({
-            name: current.name,
-            logo: current.logo,
-            group: group,
-            channelId: channelId,
-          });
-        }
-      }
+      return;
+    }
+    if (line.startsWith('#') || !current) return;
+
+    const group = current.group;
+    if (IPTV_EXCLUDE_GROUPS.has(group) || !IPTV_LIVE_GROUPS.has(group)) {
       current = null;
+      return;
+    }
+    const urlM = line.match(/\/(\d+)\.ts(?:\?.*)?$/);
+    if (!urlM || !current.name || seen.has(current.name)) {
+      current = null;
+      return;
+    }
+    seen.add(current.name);
+    channels.push({ name: current.name, logo: current.logo, group, channelId: urlM[1] });
+    current = null;
+  };
+
+  for await (const chunk of body) {
+    buf += decoder.decode(chunk, { stream: true });
+    let idx;
+    while ((idx = buf.indexOf('\n')) !== -1) {
+      let line = buf.slice(0, idx);
+      buf = buf.slice(idx + 1);
+      if (line.endsWith('\r')) line = line.slice(0, -1);
+      consume(line);
     }
   }
+  buf += decoder.decode();
+  if (buf) consume(buf.replace(/\r$/, ''));
+
   return channels;
 }
 
 async function ler_iptv() {
   const agora = Date.now();
   if (iptv_cache && agora - iptv_cache_em < IPTV_CACHE_TTL) return iptv_cache;
-  const texto = await fetch_iptv_m3u();
-  if (!texto) {
-    if (iptv_cache) return iptv_cache;
-    return { total: 0, groups: [], channels: [], by_group: {} };
-  }
-  const channels = parse_iptv_m3u(texto);
-  const by_group = {};
-  for (const ch of channels) {
-    (by_group[ch.group] = by_group[ch.group] || []).push(ch);
-  }
-  const groups = Object.keys(by_group).sort();
-  // construct URLs at runtime
-  for (const ch of channels) {
-    if (ch.channelId) {
+  if (iptv_inflight) return iptv_inflight;
+
+  iptv_inflight = (async () => {
+    const t0 = Date.now();
+    const r = await fetch_iptv_response();
+    if (!r) {
+      if (iptv_cache) return iptv_cache;
+      return { total: 0, groups: [], channels: [], by_group: {}, error: 'iptv_unavailable' };
+    }
+    const channels = await parse_iptv_stream(r.body);
+    const by_group = {};
+    for (const ch of channels) {
+      (by_group[ch.group] = by_group[ch.group] || []).push(ch);
       ch.url = `${IPTV_BASE}/${IPTV_USER}/${IPTV_PASS}/${ch.channelId}.ts`;
     }
-  }
-  iptv_cache = { total: channels.length, groups, channels, by_group };
-  iptv_cache_em = agora;
-  return iptv_cache;
+    const groups = Object.keys(by_group).sort();
+    iptv_cache = { total: channels.length, groups, channels, by_group };
+    iptv_cache_em = Date.now();
+    console.log(`  iptv parse      ${channels.length} canais em ${Date.now() - t0} ms`);
+    return iptv_cache;
+  })().finally(() => { iptv_inflight = null; });
+
+  return iptv_inflight;
 }
 
 function parse_range(header, size) {
@@ -903,4 +931,13 @@ server.listen(PORT, HOST, async () => {
   console.log(`  contas          ${store.users.length} usuário(s) · ${store.sessions.length} sessão(ões)`);
   console.log(`  media/          ${lib.length} arquivo(s) de vídeo`);
   console.log('');
+
+  // aquece o cache do IPTV em background — primeira visita não paga o parse
+  if (IPTV_ENABLED) {
+    ler_iptv()
+      .then((d) => console.log(`  iptv            ${d.total} canal(is) ao vivo · ${d.groups.length} grupo(s)`))
+      .catch((e) => console.error('  iptv            falhou:', e.message));
+  } else {
+    console.log('  iptv            desativado (IPTV_USER/IPTV_PASS ausentes)');
+  }
 });
