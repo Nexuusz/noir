@@ -21,7 +21,7 @@ const PORT = Number(process.env.PORT) || 4321;
 const HOST = process.env.HOST || '0.0.0.0';
 
 /* ───────── IPTV (credenciais via env) ───────── */
-const IPTV_BASE = (process.env.IPTV_BASE || 'http://ultrap.top').replace(/\/$/, '');
+const IPTV_BASE = (process.env.IPTV_BASE || 'https://ultrap.top').replace(/\/$/, '');
 const IPTV_USER = process.env.IPTV_USER || '';
 const IPTV_PASS = process.env.IPTV_PASS || '';
 const IPTV_ENABLED = !!(IPTV_USER && IPTV_PASS);
@@ -426,25 +426,119 @@ async function ler_iptv() {
 
   iptv_inflight = (async () => {
     const t0 = Date.now();
-    const r = await fetch_iptv_response();
-    if (!r) {
-      if (iptv_cache) return iptv_cache;
-      return { total: 0, groups: [], channels: [], by_group: {}, error: 'iptv_unavailable' };
+
+    // 1ª escolha: catálogo versionado no repo (sem credenciais) — instantâneo e imune a bloqueio de IP do provedor
+    let channels = null;
+    try {
+      const bruto = await readFile(join(ROOT, 'iptv_channels.json'), 'utf8');
+      const dados = JSON.parse(bruto);
+      channels = (dados.channels || []).map((c) => ({
+        name: c.name,
+        logo: c.logo,
+        group: c.group,
+        channelId: c.id ?? c.channelId,
+      }));
+    } catch {
+      channels = null;
     }
-    const channels = await parse_iptv_stream(r.body);
+
+    if (!channels) {
+      const r = await fetch_iptv_response();
+      if (!r) {
+        if (iptv_cache) return iptv_cache;
+        return { total: 0, groups: [], channels: [], by_group: {}, error: 'iptv_unavailable' };
+      }
+      channels = await parse_iptv_stream(r.body);
+    }
+
     const by_group = {};
     for (const ch of channels) {
       (by_group[ch.group] = by_group[ch.group] || []).push(ch);
-      ch.url = `${IPTV_BASE}/${IPTV_USER}/${IPTV_PASS}/${ch.channelId}.ts`;
+      ch.url = `/api/iptv/play?id=${encodeURIComponent(ch.channelId)}`;
     }
     const groups = Object.keys(by_group).sort();
     iptv_cache = { total: channels.length, groups, channels, by_group };
     iptv_cache_em = Date.now();
-    console.log(`  iptv parse      ${channels.length} canais em ${Date.now() - t0} ms`);
+    console.log(`  iptv            ${channels.length} canais em ${Date.now() - t0} ms`);
     return iptv_cache;
   })().finally(() => { iptv_inflight = null; });
 
   return iptv_inflight;
+}
+
+/* ───────── IPTV proxy ─────────
+   O edge do provedor só fala HTTP e o site é HTTPS: o navegador bloqueia o stream
+   por mixed content. O proxy resolve isso e mantém as credenciais no servidor.
+   fluxo: /api/iptv/play?id=  → 302 do painel  → edge http  → manifesto reescrito
+          /api/iptv/seg?h&p&t → bytes do segmento (video/mp2t) */
+
+const edge_cache = new Map(); // id -> { host, token, em }
+const EDGE_TTL = 60_000;
+const b64enc = (s) => Buffer.from(s, 'utf8').toString('base64url');
+const b64dec = (s) => Buffer.from(s, 'base64url').toString('utf8');
+
+async function iptv_resolve_edge(id) {
+  try {
+    const r = await fetch(`${IPTV_BASE}/${IPTV_USER}/${IPTV_PASS}/${id}.ts`, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(15_000),
+      headers: { 'user-agent': 'NOIR/2.0' },
+    });
+    const loc = r.headers.get('location');
+    if (!loc) return null;
+    const u = new URL(loc);
+    return { host: u.host, token: u.search };
+  } catch (e) {
+    console.error('iptv edge:', e.message);
+    return null;
+  }
+}
+
+async function iptv_edge(id) {
+  const c = edge_cache.get(id);
+  if (c && Date.now() - c.em < EDGE_TTL) return c;
+  const e = await iptv_resolve_edge(id);
+  if (!e) return null;
+  const rec = { ...e, em: Date.now() };
+  edge_cache.set(id, rec);
+  if (edge_cache.size > 400) {
+    for (const [k, v] of edge_cache) if (Date.now() - v.em > EDGE_TTL) edge_cache.delete(k);
+  }
+  return rec;
+}
+
+async function iptv_manifest(id) {
+  if (!IPTV_ENABLED) return null;
+  let edge = await iptv_edge(id);
+  if (!edge) return null;
+
+  let up = await fetch(`http://${edge.host}/auth/${id}.m3u8${edge.token}`, {
+    signal: AbortSignal.timeout(15_000),
+    headers: { 'user-agent': 'NOIR/2.0' },
+  }).catch(() => null);
+
+  if (!up || !up.ok) {
+    edge_cache.delete(id);
+    edge = await iptv_edge(id);
+    if (!edge) return null;
+    up = await fetch(`http://${edge.host}/auth/${id}.m3u8${edge.token}`, {
+      signal: AbortSignal.timeout(15_000),
+      headers: { 'user-agent': 'NOIR/2.0' },
+    }).catch(() => null);
+    if (!up || !up.ok) return null;
+  }
+
+  const txt = await up.text();
+  const h = b64enc(edge.host);
+  const t = b64enc(edge.token);
+  return txt
+    .split('\n')
+    .map((linha) => {
+      const s = linha.trim();
+      if (!s || s.startsWith('#')) return linha;
+      return `/api/iptv/seg?h=${h}&p=${b64enc(s)}&t=${t}`;
+    })
+    .join('\n');
 }
 
 function parse_range(header, size) {
@@ -802,6 +896,68 @@ const server = createServer(async (req, res) => {
         return send_json(res, 200, dados);
       } catch (err) {
         return send_json(res, 500, { error: err.message });
+      }
+    }
+
+    if (pathname === '/api/iptv/play') {
+      if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, { Allow: 'GET, HEAD' }); return res.end(); }
+      const id = (url.searchParams.get('id') || '').replace(/\D/g, '');
+      if (!id) return send_json(res, 400, { error: 'id obrigatório' });
+      try {
+        const manifesto = await iptv_manifest(id);
+        if (!manifesto) return send_json(res, 502, { error: 'canal indisponível' });
+        res.writeHead(200, {
+          'Content-Type': 'application/vnd.apple.mpegurl',
+          'Cache-Control': 'no-store',
+          'Access-Control-Allow-Origin': '*',
+          'Content-Length': Buffer.byteLength(manifesto),
+        });
+        return res.end(req.method === 'HEAD' ? undefined : manifesto);
+      } catch (err) {
+        return send_json(res, 502, { error: err.message });
+      }
+    }
+
+    if (pathname === '/api/iptv/seg') {
+      if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, { Allow: 'GET, HEAD' }); return res.end(); }
+      let host, caminho, token;
+      try {
+        host = b64dec(url.searchParams.get('h') || '');
+        caminho = b64dec(url.searchParams.get('p') || '');
+        token = b64dec(url.searchParams.get('t') || '');
+      } catch {
+        return send_json(res, 400, { error: 'parâmetros inválidos' });
+      }
+      // trava de SSRF: só caminho de segmento do edge e host sem esquema
+      if (!/^[a-z0-9.-]+(:\d{1,5})?$/i.test(host) || !/^\/hls\/[\w.-]+\.ts$/.test(caminho)) {
+        return send_json(res, 400, { error: 'alvo inválido' });
+      }
+      const alvo = `http://${host}${caminho}${token}`;
+      const ac = new AbortController();
+      res.on('close', () => ac.abort());
+      try {
+        const up = await fetch(alvo, {
+          signal: AbortSignal.any([ac.signal, AbortSignal.timeout(30_000)]),
+          headers: { 'user-agent': 'NOIR/2.0' },
+        });
+        if (!up.ok || !up.body) {
+          res.writeHead(up.status === 404 ? 404 : 502, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
+          return res.end('segmento indisponível');
+        }
+        res.writeHead(200, {
+          'Content-Type': 'video/mp2t',
+          'Cache-Control': 'no-store',
+          'Access-Control-Allow-Origin': '*',
+        });
+        if (req.method === 'HEAD') { try { ac.abort(); } catch {} return res.end(); }
+        for await (const chunk of up.body) {
+          if (res.destroyed) { ac.abort(); break; }
+          if (!res.write(chunk)) await new Promise((r) => res.once('drain', r));
+        }
+        return res.end();
+      } catch (err) {
+        if (res.headersSent) return res.destroy();
+        return send_json(res, 502, { error: err.message });
       }
     }
 
