@@ -396,7 +396,7 @@
           return;
         }
         hls.destroy(); hls = null;
-        msg('erro', 'Canal indisponível', 'O provedor não respondeu. Tente outro canal ou volte em instantes.', true);
+        msg('erro', 'Canal indisponível', 'O provedor bloqueia reprodução fora do Brasil. Use o app NOIR ou o servidor local (192.168.1.104) para assistir.', true);
       });
     } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
       player.src = url;
