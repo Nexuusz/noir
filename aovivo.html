@@ -236,7 +236,7 @@
   // Carregar canais do JSON
   async function loadChannels() {
     try {
-      const r = await fetch('iptv_live.json');
+      const r = await fetch('/api/iptv');
       const data = await r.json();
       channels = data.channels || [];
       renderFilters(data.groups || []);

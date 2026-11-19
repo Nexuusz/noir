@@ -20,6 +20,12 @@ const STORE_FILE = join(DATA, 'store.json');
 const PORT = Number(process.env.PORT) || 4321;
 const HOST = process.env.HOST || '0.0.0.0';
 
+/* ───────── IPTV (credenciais via env) ───────── */
+const IPTV_BASE = (process.env.IPTV_BASE || 'http://ultrap.top').replace(/\/$/, '');
+const IPTV_USER = process.env.IPTV_USER || '';
+const IPTV_PASS = process.env.IPTV_PASS || '';
+const IPTV_ENABLED = !!(IPTV_USER && IPTV_PASS);
+
 const SESSION_COOKIE = 'fehd_sid';
 const SESSION_DAYS = 60;
 const SESSION_TTL = SESSION_DAYS * 24 * 60 * 60 * 1000;
@@ -312,6 +318,105 @@ async function ler_catalogo() {
   catalogo_cache = dados;
   catalogo_em = agora;
   return dados;
+}
+
+/* ───────── IPTV: parse M3U em runtime ───────── */
+let iptv_cache = null;
+let iptv_cache_em = 0;
+const IPTV_CACHE_TTL = 30 * 60 * 1000; // 30 min
+
+const IPTV_LIVE_GROUPS = new Set([
+  'GLOBO SUDESTE','GLOBO NORDESTE','GLOBO SUL','GLOBO NORTE','GLOBO CENTRO-OESTE',
+  'RECORD TV','SBT','BAND','ABERTOS','NOTICIAS','HBO','TELECINE','CINE',
+  'ESPN','ESPORTES','LUTAS / UFC','PREMIERE','SPORTV','DOCUMENTÁRIOS',
+  'INFANTIS','VARIEDADES','RELIGIOSOS','CULINÁRIA','FILMES E SÉRIES',
+  'HBO MAX PPV','DAZN PPV','PRIME VIDEO PPV','DISNEY+ PPV','GOAT PPV',
+  'SPORTYNET PPV','CAZÉ TV PPV','PARAMOUNT+ PPV','APPLE TV+ PPV',
+  'PAY-PER-VIEW','LUTAS','CAMPEONATOS ESTADUAIS','COPINHA 2026',
+  'A FAZENDA 18','FILMES E SÉRIES',
+]);
+
+const IPTV_EXCLUDE_GROUPS = new Set([
+  '24H INFANTIS/DESENHOS','24H SÉRIES/PROGRAMAS','24H-BRASILEIRINHAS ADULTOS +18',
+  '24H DISCOVERY+','24H DORAMAS','24H FILMES','24H-PARODIAS EROTICAS ADULTOS +18',
+  'ADULTOS +18','ADULTOS +18 - ONLY FANS/PRIVACY','ADULTOS 18+ GAYS/TRANS',
+  'Reels | Shorts','RÁDIOS','RÁDIOS RELIGIOSAS','RÁDIOS NOTÍCIAS/JORNALISMO',
+  'RÁDIOS DIVERSAS',
+]);
+
+async function fetch_iptv_m3u() {
+  if (!IPTV_ENABLED) return null;
+  const url = `${IPTV_BASE}/get.php?username=${encodeURIComponent(IPTV_USER)}&password=${encodeURIComponent(IPTV_PASS)}&type=m3u_plus`;
+  try {
+    const r = await fetch(url, { headers: { 'user-agent': 'NOIR/2.0' } });
+    if (!r.ok) return null;
+    return await r.text();
+  } catch (e) {
+    console.error('IPTV fetch:', e.message);
+    return null;
+  }
+}
+
+function parse_iptv_m3u(texto) {
+  const channels = [];
+  const seen = new Set();
+  let current = null;
+  for (const raw of texto.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (line.startsWith('#EXTINF')) {
+      const nameM = line.match(/tvg-name="([^"]*)"/);
+      const logoM = line.match(/tvg-logo="([^"]*)"/);
+      const groupM = line.match(/group-title="([^"]*)"/);
+      current = {
+        name: nameM ? nameM[1] : '',
+        logo: logoM ? logoM[1] : '',
+        group: groupM ? groupM[1] : '',
+      };
+    } else if (line && !line.startsWith('#') && current) {
+      // extract channel id from URL path
+      const urlM = line.match(/\/(\d+)\.ts$/);
+      const channelId = urlM ? urlM[1] : null;
+      const group = current.group;
+      if (!IPTV_EXCLUDE_GROUPS.has(group) && IPTV_LIVE_GROUPS.has(group)) {
+        if (!seen.has(current.name)) {
+          seen.add(current.name);
+          channels.push({
+            name: current.name,
+            logo: current.logo,
+            group: group,
+            channelId: channelId,
+          });
+        }
+      }
+      current = null;
+    }
+  }
+  return channels;
+}
+
+async function ler_iptv() {
+  const agora = Date.now();
+  if (iptv_cache && agora - iptv_cache_em < IPTV_CACHE_TTL) return iptv_cache;
+  const texto = await fetch_iptv_m3u();
+  if (!texto) {
+    if (iptv_cache) return iptv_cache;
+    return { total: 0, groups: [], channels: [], by_group: {} };
+  }
+  const channels = parse_iptv_m3u(texto);
+  const by_group = {};
+  for (const ch of channels) {
+    (by_group[ch.group] = by_group[ch.group] || []).push(ch);
+  }
+  const groups = Object.keys(by_group).sort();
+  // construct URLs at runtime
+  for (const ch of channels) {
+    if (ch.channelId) {
+      ch.url = `${IPTV_BASE}/${IPTV_USER}/${IPTV_PASS}/${ch.channelId}.ts`;
+    }
+  }
+  iptv_cache = { total: channels.length, groups, channels, by_group };
+  iptv_cache_em = agora;
+  return iptv_cache;
 }
 
 function parse_range(header, size) {
@@ -655,6 +760,21 @@ const server = createServer(async (req, res) => {
     if (pathname === '/api/library') {
       if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, { Allow: 'GET, HEAD' }); return res.end(); }
       return send_json(res, 200, { media: await build_library() });
+    }
+
+    if (pathname === '/api/iptv') {
+      if (req.method !== 'GET') { res.writeHead(405, { Allow: 'GET' }); return res.end(); }
+      try {
+        const dados = await ler_iptv();
+        const grupo = url.searchParams.get('group');
+        if (grupo) {
+          const filtrados = (dados.channels || []).filter((c) => c.group === grupo);
+          return send_json(res, 200, { total: filtrados.length, channels: filtrados });
+        }
+        return send_json(res, 200, dados);
+      } catch (err) {
+        return send_json(res, 500, { error: err.message });
+      }
     }
 
     if (pathname.startsWith('/api/')) {

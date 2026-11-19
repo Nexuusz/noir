@@ -13,3 +13,7 @@ reclassify_progress.json
 expand3_progress.json
 collected_ids.json
 expand_progress.json
+iptv_live.json
+parse_iptv.py
+parse_iptv_live.py
+RESUMO_IPTV_APK.md
