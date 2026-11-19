@@ -17,3 +17,5 @@ iptv_live.json
 parse_iptv.py
 parse_iptv_live.py
 RESUMO_IPTV_APK.md
+wrangler.toml
+.dev.vars
