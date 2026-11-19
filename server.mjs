@@ -25,6 +25,7 @@ const IPTV_BASE = (process.env.IPTV_BASE || 'https://ultrap.top').replace(/\/$/,
 const IPTV_USER = process.env.IPTV_USER || '';
 const IPTV_PASS = process.env.IPTV_PASS || '';
 const IPTV_ENABLED = !!(IPTV_USER && IPTV_PASS);
+const IPTV_PROXY = (process.env.IPTV_PROXY || '').replace(/\/$/, '');
 
 const SESSION_COOKIE = 'fehd_sid';
 const SESSION_DAYS = 60;
@@ -454,7 +455,9 @@ async function ler_iptv() {
     const by_group = {};
     for (const ch of channels) {
       (by_group[ch.group] = by_group[ch.group] || []).push(ch);
-      ch.url = `/api/iptv/play?id=${encodeURIComponent(ch.channelId)}`;
+      ch.url = IPTV_PROXY
+        ? `${IPTV_PROXY}/play?id=${ch.channelId}`
+        : `/api/iptv/play?id=${encodeURIComponent(ch.channelId)}`;
     }
     const groups = Object.keys(by_group).sort();
     iptv_cache = { total: channels.length, groups, channels, by_group };
@@ -900,24 +903,6 @@ const server = createServer(async (req, res) => {
       } catch (err) {
         return send_json(res, 500, { error: err.message });
       }
-    }
-
-    if (pathname === '/api/iptv/debug') {
-      const id = (url.searchParams.get('id') || '1101').replace(/\D/g, '') || '1101';
-      const alvo = `${IPTV_BASE}/${IPTV_USER}/${IPTV_PASS}/${id}.ts`;
-      const out = { base: IPTV_BASE, alvo, enabled: IPTV_ENABLED };
-      try {
-        const r = await fetch(alvo, { redirect: 'manual', signal: AbortSignal.timeout(15_000), headers: { 'user-agent': 'NOIR/2.0' } });
-        out.status = r.status;
-        out.location = r.headers.get('location');
-        out.server = r.headers.get('server');
-        out.cfRay = r.headers.get('cf-ray');
-        const corpo = await r.text().catch(() => '');
-        out.corpo = corpo.slice(0, 240);
-      } catch (e) {
-        out.erro = e.message;
-      }
-      return send_json(res, 200, out);
     }
 
     if (pathname === '/api/iptv/play') {
