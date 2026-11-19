@@ -246,8 +246,13 @@
 
   // Carregar canais do JSON
   async function loadChannels() {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 45000);
     try {
-      const r = await fetch('/api/iptv');
+      chanCount.textContent = 'Conectando ao servidor...';
+      const r = await fetch('/api/iptv', { signal: ctrl.signal });
+      clearTimeout(timer);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
       const data = await r.json();
       channels = data.channels || [];
       renderFilters(data.groups || []);
@@ -256,11 +261,14 @@
       chanCount.textContent = `${channels.length} canais`;
       gridCount.textContent = `${channels.length} canais`;
       if (!channels.length) {
-        chanList.innerHTML = '<div class="channels-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9.5 5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg><strong>Nenhum canal disponível</strong>Configure IPTV_BASE, IPTV_USER e IPTV_PASS no servidor para carregar os canais.</div>';
+        chanList.innerHTML = '<div class="channels-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9.5 5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg><strong>Nenhum canal disponível</strong>Configure IPTV_BASE, IPTV_USER e IPTV_PASS no servidor.</div>';
         chanGrid.innerHTML = '<div class="channels-empty" style="grid-column:1/-1"><strong>Nenhum canal para exibir</strong></div>';
       }
     } catch (e) {
-      chanCount.textContent = 'Erro ao carregar canais';
+      clearTimeout(timer);
+      chanCount.textContent = 'Erro ao carregar';
+      const msg = e.name === 'AbortError' ? 'Servidor demorou para responder. Tente recarregar a página.' : 'Erro: ' + e.message;
+      chanList.innerHTML = '<div class="channels-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9.5 5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg><strong>Falha ao carregar</strong>' + msg + '</div>';
       console.error('Erro:', e);
     }
   }

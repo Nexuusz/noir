@@ -351,7 +351,7 @@ async function fetch_iptv_response() {
   const url = `${IPTV_BASE}/get.php?username=${encodeURIComponent(IPTV_USER)}&password=${encodeURIComponent(IPTV_PASS)}&type=m3u_plus`;
   try {
     const r = await fetch(url, {
-      headers: { 'user-agent': 'NOIR/2.0', 'accept-encoding': 'gzip, deflate' },
+      headers: { 'user-agent': 'VLC/3.0.20 LibVLC/3.0.20', 'accept-encoding': 'gzip, deflate' },
       signal: AbortSignal.timeout(180_000),
     });
     if (!r.ok) {
@@ -460,7 +460,7 @@ async function ler_iptv() {
         : `/api/iptv/play?id=${encodeURIComponent(ch.channelId)}`;
     }
     const groups = Object.keys(by_group).sort();
-    iptv_cache = { total: channels.length, groups, channels, by_group };
+    iptv_cache = { total: channels.length, groups, channels };
     iptv_cache_em = Date.now();
     console.log(`  iptv            ${channels.length} canais em ${Date.now() - t0} ms`);
     return iptv_cache;
@@ -486,7 +486,7 @@ async function iptv_resolve_edge(id) {
     const r = await fetch(alvo, {
       redirect: 'manual',
       signal: AbortSignal.timeout(15_000),
-      headers: { 'user-agent': 'NOIR/2.0' },
+      headers: { 'user-agent': 'VLC/3.0.20 LibVLC/3.0.20' },
     });
     const loc = r.headers.get('location');
     console.log(`  iptv edge       ${id} status=${r.status} loc=${loc ? 'ok' : 'none'}`);
@@ -520,7 +520,7 @@ async function iptv_manifest(id) {
 
   let up = await fetch(`http://${edge.host}/auth/${id}.m3u8${edge.token}`, {
     signal: AbortSignal.timeout(15_000),
-    headers: { 'user-agent': 'NOIR/2.0' },
+    headers: { 'user-agent': 'VLC/3.0.20 LibVLC/3.0.20' },
   }).catch(() => null);
 
   if (!up || !up.ok) {
@@ -529,7 +529,7 @@ async function iptv_manifest(id) {
     if (!edge) return null;
     up = await fetch(`http://${edge.host}/auth/${id}.m3u8${edge.token}`, {
       signal: AbortSignal.timeout(15_000),
-      headers: { 'user-agent': 'NOIR/2.0' },
+      headers: { 'user-agent': 'VLC/3.0.20 LibVLC/3.0.20' },
     }).catch(() => null);
     if (!up || !up.ok) return null;
   }
@@ -944,7 +944,7 @@ const server = createServer(async (req, res) => {
       try {
         const up = await fetch(alvo, {
           signal: AbortSignal.any([ac.signal, AbortSignal.timeout(30_000)]),
-          headers: { 'user-agent': 'NOIR/2.0' },
+          headers: { 'user-agent': 'VLC/3.0.20 LibVLC/3.0.20' },
         });
         if (!up.ok || !up.body) {
           res.writeHead(up.status === 404 ? 404 : 502, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
