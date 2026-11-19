@@ -479,12 +479,15 @@ const b64dec = (s) => Buffer.from(s, 'base64url').toString('utf8');
 
 async function iptv_resolve_edge(id) {
   try {
-    const r = await fetch(`${IPTV_BASE}/${IPTV_USER}/${IPTV_PASS}/${id}.ts`, {
+    const alvo = `${IPTV_BASE}/${IPTV_USER}/${IPTV_PASS}/${id}.ts`;
+    const r = await fetch(alvo, {
       redirect: 'manual',
       signal: AbortSignal.timeout(15_000),
       headers: { 'user-agent': 'NOIR/2.0' },
     });
     const loc = r.headers.get('location');
+    console.log(`  iptv edge       ${id} status=${r.status} loc=${loc ? 'ok' : 'none'}`);
+    if (r.body) await r.body.cancel().catch(() => {});
     if (!loc) return null;
     const u = new URL(loc);
     return { host: u.host, token: u.search };
@@ -897,6 +900,24 @@ const server = createServer(async (req, res) => {
       } catch (err) {
         return send_json(res, 500, { error: err.message });
       }
+    }
+
+    if (pathname === '/api/iptv/debug') {
+      const id = (url.searchParams.get('id') || '1101').replace(/\D/g, '') || '1101';
+      const alvo = `${IPTV_BASE}/${IPTV_USER}/${IPTV_PASS}/${id}.ts`;
+      const out = { base: IPTV_BASE, alvo, enabled: IPTV_ENABLED };
+      try {
+        const r = await fetch(alvo, { redirect: 'manual', signal: AbortSignal.timeout(15_000), headers: { 'user-agent': 'NOIR/2.0' } });
+        out.status = r.status;
+        out.location = r.headers.get('location');
+        out.server = r.headers.get('server');
+        out.cfRay = r.headers.get('cf-ray');
+        const corpo = await r.text().catch(() => '');
+        out.corpo = corpo.slice(0, 240);
+      } catch (e) {
+        out.erro = e.message;
+      }
+      return send_json(res, 200, out);
     }
 
     if (pathname === '/api/iptv/play') {
