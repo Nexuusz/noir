@@ -20,3 +20,5 @@ RESUMO_IPTV_APK.md
 wrangler.toml
 .dev.vars
 player-videojs.html
+
+.wrangler/
